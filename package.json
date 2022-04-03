@@ -6,21 +6,24 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js"
+    "dev": "env-cmd -f ./config/dev.env nodemon ./src/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sendgrid/mail": "^7.6.2",
     "bcrypt": "^5.0.1",
     "express": "^4.17.3",
+    "hbs": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
+    "jsqr": "^1.4.0",
     "mongoose": "^6.2.8",
+    "nodemailer": "^6.7.3",
     "qrcode": "^1.5.0",
     "speakeasy": "^2.0.0",
     "validator": "^13.7.0"
   },
   "devDependencies": {
+    "env-cmd": "^10.1.0",
     "nodemon": "^2.0.15"
   }
 }

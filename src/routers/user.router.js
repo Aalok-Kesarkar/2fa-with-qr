@@ -1,8 +1,11 @@
 const express = require('express')
 const speakeasy = require('speakeasy')
+const v8 = require('v8')
 const { User } = require('../models/user.model')
 const authenticate = require('../middleware/authenticate')
 const sendEmail = require('../email-sending/sendgrid')
+const QRCode = require('qrcode')
+const jsQR = require('jsqr')
 const router = new express.Router()
 
 // Post method for new user //SIGNUP
@@ -13,11 +16,15 @@ router.post('/user/signin', async (req, res) => {
     try {
         await user.save()
         const otp = await user.generateOTPSecretKey()
-        // sendEmail.otpMail(user.email, user.name, otp)
-        res.status(201).send({ user, otp })
+
+        const emailSubject = `OTP for email verification`
+        const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for verifying email is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
+        sendEmail.regularEmail(user.email, emailSubject, htmlText)
+
+        res.status(201).send({ message: `OTP for verification of email sent successfully to ${user.email}` })
         // res.redirect('/verify-email')
     } catch (err) {
-        res.status(400).send(`Error occured ${err}`)
+        res.status(400).send({ error: `Error occured, ${err}` })
     }
 })
 
@@ -33,7 +40,7 @@ router.post('/verify-email', async (req, res) => {
                 secret: tempSecret,
                 encoding: 'base32',
                 token: req.body.otp,
-                window: 3
+                window: 5
             })
 
             if (verified) {     // if email is verified, send JWT token for logging in
@@ -43,13 +50,17 @@ router.post('/verify-email', async (req, res) => {
                 user.tempSecretKey = undefined
                 user.isEmailVerified = true
 
+                const emailSubject = `Email is verified successfuly`
+                const htmlText = `<h3>Dear ${user.name},</h3><br>Your email address is verified successfuly!</h2>`
+                sendEmail.regularEmail(user.email, emailSubject, htmlText)
+
                 await user.save()
                 res.status(201).send({ user, token })
             } else {
-                res.status(400).send(`OTP doesn't match`)
+                res.status(400).send({ error: `OTP doesn't match` })
             }
         } else {
-            res.status(400).send(`Email has already been verified`)
+            res.status(400).send({ message: `Email has already been verified` })
         }
     } catch (err) {
         res.status(500).send(err)
@@ -62,12 +73,15 @@ router.post('/regenerate-email-verification-otp', async (req, res) => {
         if (!user.isEmailVerified) {    // if email aready verified, send error as email is already verified, in short don't send verification OTP again
             const otp = await user.regenerateEmailVerificationOTP()
 
-            // sendEmail.otpMail(user.email, user.name, otp)
-            res.send(`OTP: ${otp}, will expire in 2 minutes`)
+            const emailSubject = `OTP for email verification`
+            const htmlText = `<h3>Dear ${user.name},</h3><br>As per your request for new OTP...<br>OTP for verifying email is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only.`
+            sendEmail.regularEmail(user.email, emailSubject, htmlText)
+
+            res.send({ message: `Email with OTP sent to ${user.email} successfully!` })
 
             // res.redirect('/verify-email')
         } else {
-            res.status(400).send(`Email has already been verified`)
+            res.status(400).send({ message: `Email has already been verified` })
         }
     } catch (err) {
         res.status(500).send(err)
@@ -80,33 +94,35 @@ router.post('/user/login', async (req, res) => {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const otp = await user.generateOTP()
 
-        res.send({ message: "Enter below OTP in validation api", otp, user })
+        const emailSubject = `OTP for logging in`
+        const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for logging in is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
+        sendEmail.regularEmail(user.email, emailSubject, htmlText)
+        res.send({ message: `OTP sent to ${user.email} successfuly` })
     } catch (err) {
-        res.status(400).send(`Something went wrong ${err}`)
+        res.status(400).send({ error: `Something went wrong: ${err}` })
     }
 })
 
 router.post('/otp-validate', async (req, res) => {
     const user = await User.findOne({ email: req.body.email })
     try {
-        console.log(user)
-        console.log(user.secretKey)
         const secret = user.secretKey
+
         const validate = speakeasy.totp.verify({
             secret,
             encoding: 'base32',
             token: req.body.otp,
-            window: 3
+            window: 5
         })
-        console.log(validate)
+
         if (validate) {
             const token = await user.generateAuthToken()
             res.send({ message: `OTP verified and logged in successfully`, token })
         } else {
-            res.status(400).send('OTP not correct or timed out')
+            res.status(400).send({ error: 'OTP not correct or timed out' })
         }
     } catch (err) {
-        res.status(400).send(`${err}`)
+        res.status(400).send({ error: `Error occured, ${err}` })
     }
 })
 
@@ -122,9 +138,9 @@ router.post('/user/logout', authenticate, async (req, res) => {
             return eachTokenObjInDb.token !== req.token // Return true if token does not match with token come with header
         })
         await req.user.save() // Save all tokens except one which match with request header token
-        res.send(`Successfully logged out`)
+        res.send({ message: `Successfully logged out` })
     } catch (err) {
-        res.status(500).send(`Server issue, coludn't logged out, try again`)
+        res.status(500).send({ error: `Server issue, coludn't logged out, try again` })
     }
 })
 
@@ -133,9 +149,9 @@ router.post('/user/logout-all', authenticate, async (req, res) => {
     try {
         req.user.tokens = []
         await req.user.save()
-        res.send(`Successfully logged out of all devices`)
+        res.send({ message: `Successfully logged out of all devices` })
     } catch (err) {
-        res.status(500).send(`Can't perform logout operation, Error from system is: ${err}`)
+        res.status(500).send({ error: `Can't perform logout operation, ${err}` })
     }
 })
 
@@ -156,9 +172,9 @@ router.patch('/user', authenticate, async (req, res) => {
             req.user[update] = req.body[update]
         })
         await req.user.save()
-        res.send([`Updated successfully!`, req.user])
+        res.send({ message: `Updated successfully!`, updated: req.user })
     } catch (err) {
-        res.status(400).send(err)
+        res.status(400).send({ error: `Can't update, ${err}` })
     }
 })
 
@@ -166,7 +182,21 @@ router.patch('/user', authenticate, async (req, res) => {
 router.delete('/user', authenticate, async (req, res) => {
     try {
         await req.user.remove()
-        res.send([`User Deleted :(`, req.user])
+        res.send({ message: `User Deleted :(`, deletedUser: req.user })
+    } catch (err) {
+        res.status(500).send({ error: `Couldn't delete, ${err}` })
+    }
+})
+
+router.get('/generate-qr', async (req, res) => {
+    try {
+        QRCode.toDataURL(req.body.text, function (err, url) {
+
+            sendEmail.verifyLoginByQR('aalokkesarkar7@gmail.com', 'Aalok Kesarkar', url)
+            res.send()
+        })
+        console.log(`QR image sent to aalokkesarkar7@gmail.com successfuly`)
+
     } catch (err) {
         res.status(500).send(err)
     }

@@ -1,18 +1,48 @@
-// 'use strict';
-// const sgMail = require('@sendgrid/mail');
+'use strict';
+const v8 = require('v8')
 
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+const nodemailer = require('nodemailer')
 
-// const otpMail = (userEmail, userName, otp) => {
-//     sgMail.send({
-//         to: userEmail,
-//         from: `aalok.public@gmail.com`,
-//         subject: `OTP to login!`,
-//         html: `<h3>Hey ${userName}!</h3> <p>Thank you for choosing our Task Manager application 😃️</p><b>
-//         OTP for email verification is ${otp}`
-//     })
-// }
+const mailTransporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: 'aalok.public@gmail.com',
+        pass: 'bEhz^#*8@G'
+    }
+})
 
-// module.exports = {
-//     otpMail
-// }
+const regularEmail = (userEmail, emailSubject, htmlText) => {
+    mailTransporter.sendMail({
+        from: "aalok.public@gmail.com",
+        to: userEmail,
+        subject: emailSubject,
+        html: htmlText
+    }, (err) => {
+        if (err) {
+            return console.log(`Couldn't send mail: ${err}`)
+        } else {
+            console.log(`OTP sent to ${userEmail} succesfully`)
+        }
+    })
+}
+
+const verifyLoginByQR = (userEmail, userName, imageBuffer) => {
+    qrImage = v8.deserialize(imageBuffer)
+    mailTransporter.sendMail({
+        from: "aalok.public@gmail.com",
+        to: userEmail,
+        subject: "QR for logging in",
+        html: `QR for logging in to app is ${qrImage}`
+    }, (err) => {
+        if (err) {
+            return console.log(`Couldn't send mail: ${err}`)
+        } else {
+            console.log(`OTP sent to ${userEmail} succesfully`)
+        }
+    })
+}
+
+module.exports = {
+    regularEmail,
+    verifyLoginByQR
+}

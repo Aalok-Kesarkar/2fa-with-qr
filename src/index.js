@@ -1,12 +1,19 @@
 const express = require('express')
 const qr = require('qrcode')
+const path = require('path')
+// const hbs = require('hbs')
 require('./db/mongoose')
-
+const PORT = process.env.AUTH_PROJECT_PORT
 const app = express()
-
+// const staticDirectory = path.join(__dirname, '../public')
+// const viewsPath = path.join(__dirname, '../templates/views')
 app.use(express.json())
 
+// app.use(express.static(staticDirectory))
 const userRouter = require('./routers/user.router')
+
+// app.set('view engine', 'hbs') // Telling express that from now on "View Engine" will be hbs!
+// app.set('views', viewsPath) // Telling express that directory you're looking as "views" is in viewsPath location
 
 app.use(userRouter)
 
@@ -38,7 +45,7 @@ app.use((req, res, next) => {           // if none of the path matches with path
 //     }
 // })
 
-const port = 3004
-app.listen(port, () => {
-    console.log(`Server started on port ${port}`)
+// const port = 3004
+app.listen(PORT, () => {
+    console.log(`E-authentication system server running on port ${PORT}`)
 })
