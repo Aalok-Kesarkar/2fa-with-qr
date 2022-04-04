@@ -19,9 +19,14 @@ router.post('/user/signin', async (req, res) => {
 
         const emailSubject = `OTP for email verification`
         const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for verifying email is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
-        sendEmail.regularEmail(user.email, emailSubject, htmlText)
+        
+        sendEmail.regularEmail(user.email, emailSubject, htmlText)  // calling function regularEmail from another file.
+        .then(msg => {
+            res.status(201).send({ message: msg })      // catching success msg and sending to client
+        }).catch((err) => {
+            res.status(500).send({ error: err })        // catching error and sending to client
+        })
 
-        res.status(201).send({ message: `OTP for verification of email sent successfully to ${user.email}` })
         // res.redirect('/verify-email')
     } catch (err) {
         res.status(400).send({ error: `Error occured, ${err}` })
