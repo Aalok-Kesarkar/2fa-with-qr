@@ -3,7 +3,7 @@ const speakeasy = require('speakeasy')
 const v8 = require('v8')
 const { User } = require('../models/user.model')
 const authenticate = require('../middleware/authenticate')
-const sendEmail = require('../email-sending/sendgrid')
+const emailSender = require('../email-sending/emailSender')
 const QRCode = require('qrcode')
 const jsQR = require('jsqr')
 const router = new express.Router()
@@ -19,17 +19,13 @@ router.post('/user/signin', async (req, res) => {
 
         const emailSubject = `OTP for email verification`
         const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for verifying email is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
-        
-        sendEmail.regularEmail(user.email, emailSubject, htmlText)  // calling function regularEmail from another file.
-        .then(msg => {
-            res.status(201).send({ message: msg })      // catching success msg and sending to client
-        }).catch((err) => {
-            res.status(500).send({ error: err })        // catching error and sending to client
-        })
 
+        await emailSender.regularEmail(user.email, emailSubject, htmlText)
+
+        res.send({ message: `Check inbox of ${user.email} for email verification OTP!` })
         // res.redirect('/verify-email')
     } catch (err) {
-        res.status(400).send({ error: `Error occured, ${err}` })
+        res.status(400).send({ error: ` ${err}` })
     }
 })
 
@@ -57,10 +53,10 @@ router.post('/verify-email', async (req, res) => {
 
                 const emailSubject = `Email is verified successfuly`
                 const htmlText = `<h3>Dear ${user.name},</h3><br>Your email address is verified successfuly!</h2>`
-                sendEmail.regularEmail(user.email, emailSubject, htmlText)
+                await emailSender.regularEmail(user.email, emailSubject, htmlText)
 
                 await user.save()
-                res.status(201).send({ user, token })
+                res.status(201).send({ message: `Email verified succesfully`, user, token })
             } else {
                 res.status(400).send({ error: `OTP doesn't match` })
             }
@@ -80,7 +76,7 @@ router.post('/regenerate-email-verification-otp', async (req, res) => {
 
             const emailSubject = `OTP for email verification`
             const htmlText = `<h3>Dear ${user.name},</h3><br>As per your request for new OTP...<br>OTP for verifying email is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only.`
-            sendEmail.regularEmail(user.email, emailSubject, htmlText)
+            emailSender.regularEmail(user.email, emailSubject, htmlText)
 
             res.send({ message: `Email with OTP sent to ${user.email} successfully!` })
 
@@ -101,7 +97,7 @@ router.post('/user/login', async (req, res) => {
 
         const emailSubject = `OTP for logging in`
         const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for logging in is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
-        sendEmail.regularEmail(user.email, emailSubject, htmlText)
+        emailSender.regularEmail(user.email, emailSubject, htmlText)
         res.send({ message: `OTP sent to ${user.email} successfuly` })
     } catch (err) {
         res.status(400).send({ error: `Something went wrong: ${err}` })
@@ -197,7 +193,7 @@ router.get('/generate-qr', async (req, res) => {
     try {
         QRCode.toDataURL(req.body.text, function (err, url) {
 
-            sendEmail.verifyLoginByQR('aalokkesarkar7@gmail.com', 'Aalok Kesarkar', url)
+            emailSender.verifyLoginByQR('aalokkesarkar7@gmail.com', 'Aalok Kesarkar', url)
             res.send()
         })
         console.log(`QR image sent to aalokkesarkar7@gmail.com successfuly`)
