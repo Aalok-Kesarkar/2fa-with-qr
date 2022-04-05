@@ -18,29 +18,21 @@ const regularEmail = (userEmail, emailSubject, htmlText) => {
             to: userEmail,
             subject: emailSubject,
             html: htmlText
-        }, err => {
-            if (err) {
-                reject(`Couldn't send email: ${err}`)
-            } else {
-                resolve(`OTP sent to ${userEmail} succesfully!`)
-            }
-        })
+
+        }, err => err ? reject(`Couldn't send email: ${err}`) : resolve(`OTP sent to ${userEmail} succesfully!`))
     })
 }
 
-const verifyLoginByQR = (userEmail, userName, imageBuffer) => {
-    qrImage = v8.deserialize(imageBuffer)
-    mailTransporter.sendMail({
-        from: "aalok.temp@outlook.com",
-        to: userEmail,
-        subject: "QR for logging in",
-        html: `QR for logging in to app is ${qrImage}`
-    }, (err) => {
-        if (err) {
-            return console.log(`Couldn't send mail: ${err}`)
-        } else {
-            console.log(`OTP sent to ${userEmail} succesfully`)
-        }
+const verifyLoginByQR = (userEmail, userName, img) => {
+    return new Promise((resolve, reject) => {
+        mailTransporter.sendMail({
+            from: "aalok.temp@outlook.com",
+            to: userEmail,
+            subject: "QR for logging in ot app",
+            attachDataUrls: true,
+            html: `<h2>Dear ${userName},</h2><br>One Time QR for logging in to app. Please copy and paste into browser to get authenticated.<br><img src=${img}><br>Valid for 3 minutes only`
+
+        }, err => err ? reject(`Couldn't send email due to: ${err}`) : resolve(`QR code sent to ${userEmail} succesfully`))
     })
 }
 
