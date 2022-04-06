@@ -1,5 +1,6 @@
 'use strict';
 const v8 = require('v8')
+const fs = require('fs')
 
 const nodemailer = require('nodemailer');
 
@@ -14,7 +15,7 @@ const mailTransporter = nodemailer.createTransport({
 const regularEmail = (userEmail, emailSubject, htmlText) => {
     return new Promise((resolve, reject) => {
         mailTransporter.sendMail({
-            from: "aalok.temp@outlook.com",
+            from: "E-Auth System <aalok.temp@outlook.com>",
             to: userEmail,
             subject: emailSubject,
             html: htmlText
@@ -23,15 +24,18 @@ const regularEmail = (userEmail, emailSubject, htmlText) => {
     })
 }
 
-const verifyLoginByQR = (userEmail, userName, img) => {
+const verifyLoginByQR = (userEmail, userName, imgBin) => {
     return new Promise((resolve, reject) => {
         mailTransporter.sendMail({
-            from: "aalok.temp@outlook.com",
+            from: "E-Auth System <aalok.temp@outlook.com>",
             to: userEmail,
             subject: "QR for logging in ot app",
             attachDataUrls: true,
-            html: `<h2>Dear ${userName},</h2><br>One Time QR for logging in to app. Please copy and paste into browser to get authenticated.<br><img src=${img}><br>Valid for 3 minutes only`
-
+            html: `<h2>Dear ${userName},</h2><br>One Time QR for logging in to app. Please copy and paste into browser to get authenticated.<br><img src=${imgBin}><br>Valid for 3 minutes only`,
+            attachments: [{
+                filename: 'QR.png',
+                path: imgBin
+            }]
         }, err => err ? reject(`Couldn't send email due to: ${err}`) : resolve(`QR code sent to ${userEmail} succesfully`))
     })
 }

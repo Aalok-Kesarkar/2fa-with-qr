@@ -1,12 +1,15 @@
 const express = require('express')
 const speakeasy = require('speakeasy')
-const v8 = require('v8')
 const { User } = require('../models/user.model')
 const authenticate = require('../middleware/authenticate')
 const emailSender = require('../email-sending/emailSender')
 const QRCode = require('qrcode')
 const jsQR = require('jsqr')
+const { PNG } = require('pngjs')
+const multer = require('multer')
 const router = new express.Router()
+
+const upload = multer()
 
 // Post method for new user //SIGNUP
 router.post('/user/signin', async (req, res) => {
@@ -193,13 +196,42 @@ router.get('/generate-qr', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const otp = await user.generateOTP()
-        const image = await QRCode.toDataURL(otp)
-        // console.log(image)
-        const emailMsg = await emailSender.verifyLoginByQR(user.email, user.name, image)
+        const imageBin = await QRCode.toDataURL(otp)
+
+        const emailMsg = await emailSender.verifyLoginByQR(user.email, user.name, imageBin)
 
         res.send({ Phase: `DEVELOPEMENT PHASE`, message: emailMsg })
     } catch (err) {
         res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: err })
+    }
+})
+
+router.get('/verify-qr', upload.single('qr'), async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email })
+        
+        const buffer = req.file.buffer
+        const png = await PNG.sync.read(buffer)
+        const code = jsQR(Uint8ClampedArray.from(png.data), png.width, png.height)
+        const qrCodeText = code.data
+
+        const secret = user.secretKey
+
+        const validate = speakeasy.totp.verify({
+            secret,
+            encoding: 'base32',
+            token: qrCodeText,
+            window: 5
+        })
+
+        if (validate) {
+            const token = await user.generateAuthToken()
+            res.send({ Phase: `DEVELOPEMENT PHASE`, message: `QR verified and logged in successfully`, token })
+        } else {
+            res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: 'QR not correct or timed out' })
+        }
+    } catch (err) {
+        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: `${err}` })
     }
 })
 
