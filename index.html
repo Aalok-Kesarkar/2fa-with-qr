@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+
+<body>
+    <form id="newDocFile" method="post">
+        <dev class="actions"><input type="submit" name="commit" value="submit" /></dev>
+        <input type="file" id="docAttachmentDoc" />
+    </form>
+    <script>
+        const form = document.getElementById('newDocFile');
+        const fileInput = document.getElementById('docAttachmentDoc');
+
+        fileInput.addEventListener('change', () => {
+            form.submit();
+        })
+
+        window.addEventListener('paste', e => {
+            fileInput.files = e.clipboardData.files;
+        })
+    </script>
+</body>
+
+</html>

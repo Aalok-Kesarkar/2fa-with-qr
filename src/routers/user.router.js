@@ -208,11 +208,17 @@ router.get('/generate-qr', async (req, res) => {
 
 router.get('/verify-qr', upload.single('qr'), async (req, res) => {
     try {
+        if (req.file.mimetype != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Upload QR png file sent to email ID only` }) }
+
         const user = await User.findOne({ email: req.body.email })
-        
+        if (!user) { return res.status(404).send({ Phase: `DEVELOPEMENT PHASE`, error: `User not found` }) }
+
         const buffer = req.file.buffer
-        const png = await PNG.sync.read(buffer)
+        const png = PNG.sync.read(buffer)
+
         const code = jsQR(Uint8ClampedArray.from(png.data), png.width, png.height)
+
+        if (code === null) { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Please upload QR.png file only` }) }
         const qrCodeText = code.data
 
         const secret = user.secretKey
