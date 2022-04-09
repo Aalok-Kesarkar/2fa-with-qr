@@ -48,7 +48,7 @@ router.post('/user/signin', async (req, res) => {
 
 // @route: POST /user/verify-email
 // @desc: Verify email ID set by new user by verifying OTP sent to email
-router.post('/user/verify-email/abc', async (req, res) => {
+router.post('/user/verify-email', async (req, res) => {
     // verify that OTP is matching, if yes then generate JWT token and send to user by res.send()
     console.log(req.body)
     try {
