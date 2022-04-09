@@ -118,6 +118,16 @@ userSchema.methods.generateOTP = async function () {
     return OTP
 }
 
+userSchema.methods.verifyOTP = async (secret, otp) => {
+    const isValid = speakeasy.totp.verify({
+        secret,
+        encoding: 'base32',
+        token: otp,
+        window: 5
+    })
+    return isValid
+}
+
 userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()

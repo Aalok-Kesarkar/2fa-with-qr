@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+</head>
+
+<body>
+    <form id="sign-in" >
+        <input type="text" name="name" id="name" placeholder="name" required>
+        <input type="text" name="email" id="email" placeholder="Email" required>
+        <input type="password" name="password" id="password" placeholder="password">
+        <input type="submit" value="Submit" />
+    </form>
+
+    <script>
+        const form = document.getElementById('sign-in')
+        form.addEventListener('submit', signinUser)
+
+        async function signinUser(event) {
+            // event.preventDefault()
+            const name = document.getElementById('name').value
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+
+            const result = await fetch('/user/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify({
+                    name,
+                    email,
+                    password
+                }),
+                redirect : 'follow'
+            }).then(res => res.json())
+
+
+            console.log(result)
+        }
+    </script>
+</body>
+
+</html>

@@ -11,13 +11,26 @@ const router = new express.Router()
 
 const upload = multer()
 
-// Post method for new user //SIGNUP
+// @route: GET /user/signin
+// @desc: Render new user signin page
+router.get('/user/signin', (req, res) => {
+    res.render('signin')
+})
+
+// @route: GET /user/verify-email
+// @desc: Render email verification page
+router.get('/user/verify-email', (req, res) => {
+    console.log('aagaya')
+    res.render('verification')
+})
+
+// @route: POST /user/signin
+// @desc: Signin a new user with new login details
 router.post('/user/signin', async (req, res) => {
 
-    const user = new User(req.body)
-
     try {
-        await user.save()
+        const user = new User(req.body)
+        // await user.save()
         const otp = await user.generateOTPSecretKey()
 
         const emailSubject = `OTP for email verification`
@@ -25,15 +38,19 @@ router.post('/user/signin', async (req, res) => {
 
         await emailSender.regularEmail(user.email, emailSubject, htmlText)
 
-        res.send({ Phase: `DEVELOPEMENT PHASE`, message: `Check inbox of ${user.email} for email verification OTP!` })
-        // res.redirect('/verify-email')
+        // res.render('verification')
+        // res.send({ Phase: `DEVELOPEMENT PHASE`, message: `Check inbox of ${user.email} for email verification OTP!` })
+        res.redirect('/user/verify-email')
     } catch (err) {
         res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: ` ${err}` })
     }
 })
 
-router.post('/verify-email', async (req, res) => {
+// @route: POST /user/verify-email
+// @desc: Verify email ID set by new user by verifying OTP sent to email
+router.post('/user/verify-email/abc', async (req, res) => {
     // verify that OTP is matching, if yes then generate JWT token and send to user by res.send()
+    console.log(req.body)
     try {
         const user = await User.findOne({ email: req.body.email })
         if (!user.isEmailVerified) {        // if email aready verified, send error as email is already verified, in short don't send verification OTP again
@@ -54,24 +71,27 @@ router.post('/verify-email', async (req, res) => {
                 user.tempSecretKey = undefined
                 user.isEmailVerified = true
 
-                const emailSubject = `Email is verified successfuly`
+                const emailSubject = `Email is verified succesfully`
                 const htmlText = `<h3>Dear ${user.name},</h3><br>Your email address is verified successfuly!</h2>`
                 await emailSender.regularEmail(user.email, emailSubject, htmlText)
 
                 await user.save()
-                res.status(201).send({ Phase: `DEVELOPEMENT PHASE`, message: `Email verified succesfully`, user, token })
+                res.status(201).json({ Phase: `DEVELOPEMENT PHASE`, message: `Email verified succesfully`, user, token })
             } else {
-                res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `OTP doesn't match` })
+                res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, error: `OTP doesn't match` })
             }
         } else {
-            res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, message: `Email has already been verified` })
+            res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, message: `Email has already been verified` })
         }
     } catch (err) {
-        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: err })
+        console.log(err)
+        res.status(500).json({ Phase: `DEVELOPEMENT PHASE`, error: err })
     }
 })
 
-router.post('/regenerate-email-verification-otp', async (req, res) => {
+// @route: POST /user/recrete-veri-otp
+// @desc: Recreate OTP to verify email if past OTP is expired
+router.post('/user/recreate-veri-otp', async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email })
         if (!user.isEmailVerified) {    // if email aready verified, send error as email is already verified, in short don't send verification OTP again
@@ -92,34 +112,51 @@ router.post('/regenerate-email-verification-otp', async (req, res) => {
     }
 })
 
-// Login for user
+// @route: POST /user/login?verifMethod= <qr/otp>
+// @desc: Login existing user and specify verification method, send OTP or QR as selected by user
 router.post('/user/login', async (req, res) => {
-    try {
-        const user = await User.findByCredentials(req.body.email, req.body.password)
-        const otp = await user.generateOTP()
+    if (!req.query.verifMethod)
+        return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, message: `Tampering with URL is not allowed.` })
+    const user = await User.findByCredentials(req.body.email, req.body.password)
+    switch (req.query.verifMethod) {
+        case `otp`:
+            try {
+                const otp = await user.generateOTP()
 
-        const emailSubject = `OTP for logging in`
-        const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for logging in is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
-        emailSender.regularEmail(user.email, emailSubject, htmlText)
-        res.send({ Phase: `DEVELOPEMENT PHASE`, message: `OTP sent to ${user.email} successfuly` })
-    } catch (err) {
-        res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Something went wrong: ${err}` })
+                const emailSubject = `OTP for logging in`
+                const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for logging in is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
+                emailSender.regularEmail(user.email, emailSubject, htmlText)
+                return res.send({ Phase: `DEVELOPEMENT PHASE`, message: `OTP sent to ${user.email} successfuly` })
+            } catch (err) {
+                return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Something went wrong: ${err}` })
+            }
+        case `qr`:
+            try {
+                const user = await User.findByCredentials(req.body.email, req.body.password)
+                const otp = await user.generateOTP()
+                const imageBin = await QRCode.toDataURL(otp)
+
+                const emailMsg = await emailSender.verifyLoginByQR(user.email, user.name, imageBin)
+
+                return res.send({ Phase: `DEVELOPEMENT PHASE`, message: emailMsg })
+            } catch (err) {
+                return res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: err })
+            }
+        default:
+            return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, message: `Tampering with URL is not allowed.` })
     }
 })
 
-router.post('/otp-validate', async (req, res) => {
+// @route: POST /user/validate-login
+// @desc: Validate login request of user by accepting OTP only
+router.post('/user/validate-login', async (req, res) => {
     const user = await User.findOne({ email: req.body.email })
     try {
         const secret = user.secretKey
 
-        const validate = speakeasy.totp.verify({
-            secret,
-            encoding: 'base32',
-            token: req.body.otp,
-            window: 5
-        })
+        const isValid = await user.verifyOTP(secret, req.body.otp)
 
-        if (validate) {
+        if (isValid) {
             const token = await user.generateAuthToken()
             res.send({ Phase: `DEVELOPEMENT PHASE`, message: `OTP verified and logged in successfully`, token })
         } else {
@@ -130,12 +167,14 @@ router.post('/otp-validate', async (req, res) => {
     }
 })
 
-// Get method to see user profile
+// @route: GET /user
+// @desc: Show users profile after logging in
 router.get('/user', authenticate, async (req, res) => {
     res.send({ Phase: `DEVELOPEMENT PHASE`, user: req.user })
 })
 
-// LOGOUT from single device
+// @route: POST /user/logout
+// @desc: Logout user from current browser
 router.post('/user/logout', authenticate, async (req, res) => {
     try {
         req.user.tokens = req.user.tokens.filter((eachTokenObjInDb) => { // filter will go through for all tokens in database of that particular user (like forEach)
@@ -148,7 +187,8 @@ router.post('/user/logout', authenticate, async (req, res) => {
     }
 })
 
-// LOGOUT from multiple devices
+// @route: POST /user/logout-all
+// @desc: Logout from all currently logged in devices
 router.post('/user/logout-all', authenticate, async (req, res) => {
     try {
         req.user.tokens = []
@@ -159,7 +199,8 @@ router.post('/user/logout-all', authenticate, async (req, res) => {
     }
 })
 
-// Update user data
+// @route: PATCH /user
+// @desc: Update users personal data after verification
 router.patch('/user', authenticate, async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['name', 'email', 'age', 'password']
@@ -182,7 +223,8 @@ router.patch('/user', authenticate, async (req, res) => {
     }
 })
 
-// Delete an user with ID
+// @route: /user
+// @desc: Delete users profile
 router.delete('/user', authenticate, async (req, res) => {
     try {
         await req.user.remove()
@@ -192,21 +234,9 @@ router.delete('/user', authenticate, async (req, res) => {
     }
 })
 
-router.get('/generate-qr', async (req, res) => {
-    try {
-        const user = await User.findByCredentials(req.body.email, req.body.password)
-        const otp = await user.generateOTP()
-        const imageBin = await QRCode.toDataURL(otp)
-
-        const emailMsg = await emailSender.verifyLoginByQR(user.email, user.name, imageBin)
-
-        res.send({ Phase: `DEVELOPEMENT PHASE`, message: emailMsg })
-    } catch (err) {
-        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: err })
-    }
-})
-
-router.get('/verify-qr', upload.single('qr'), async (req, res) => {
+// @route: GET /user/verify-qr
+// @desc: Verify login attempt with QR image uploaded to endpoint
+router.get('/user/verify-qr', upload.single('qr'), async (req, res) => {
     try {
         if (req.file.mimetype != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Upload QR png file sent to email ID only` }) }
 
