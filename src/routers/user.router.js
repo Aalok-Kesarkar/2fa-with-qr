@@ -60,12 +60,12 @@ router.post('/user/verify-email', async (req, res) => {
                 user.tempSecretKey = undefined
                 user.isEmailVerified = true
 
-                const emailSubject = `Email is verified succesfully`
+                const emailSubject = `Email is verified succesfuly`
                 const htmlText = `<h3>Dear ${user.name},</h3><br>Your email address is verified successfuly!</h2>`
                 emailSender.regularEmail(user.email, emailSubject, htmlText)
 
                 await user.save()
-                res.status(201).json({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Email verified succesfully`, user, token })
+                res.status(201).json({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Email verified succesfuly`, token })
             } else {
                 res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `OTP doesn't match` })
             }
@@ -92,7 +92,7 @@ router.post('/user/recreate-veri-otp', async (req, res) => {
             const htmlText = `<h3>Dear ${user.name},</h3><br>As per your request for new OTP...<br>OTP for verifying email is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only.`
             emailSender.regularEmail(user.email, emailSubject, htmlText)
 
-            res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Email with OTP sent to ${user.email} successfully!` })
+            res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Email with OTP sent to ${user.email} successfuly!` })
 
             // res.redirect('/verify-email')
         } else {
@@ -106,9 +106,18 @@ router.post('/user/recreate-veri-otp', async (req, res) => {
 // @route: POST /user/login?verifMethod= <qr/otp>
 // @desc: Login existing user and specify verification method, send OTP or QR as selected by user
 router.post('/user/login', async (req, res) => {
+
     if (!req.query.verifMethod)
-        return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, message: `Tampering with URL is not allowed.` })
+        return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Tampering with URL is not allowed.` })
+
     const user = await User.findByCredentials(req.body.email, req.body.password)
+
+    if (!user)
+        return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Unable to login` })
+
+    if (user.isEmailVerified == false)
+        return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Verify email address before logging in` })
+
     switch (req.query.verifMethod) {
         case `otp`:
             try {
@@ -116,7 +125,7 @@ router.post('/user/login', async (req, res) => {
 
                 const emailSubject = `OTP for logging in`
                 const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for logging in is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
-                emailSender.regularEmail(user.email, emailSubject, htmlText)
+                await emailSender.regularEmail(user.email, emailSubject, htmlText)
                 return res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `OTP sent to ${user.email} successfuly` })
             } catch (err) {
                 return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Something went wrong: ${err}` })
@@ -134,7 +143,7 @@ router.post('/user/login', async (req, res) => {
                 return res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: err })
             }
         default:
-            return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, message: `Tampering with URL is not allowed.` })
+            return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Tampering with URL is not allowed.` })
     }
 })
 

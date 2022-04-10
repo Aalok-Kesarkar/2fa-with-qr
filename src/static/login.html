@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+</head>
+
+<body>
+    <h1>Login page</h1>
+    <form id="log-in">
+        <input type="text" name="email" id="email" placeholder="Email" required />
+        <input type="password" name="password" id="password" placeholder="password" required />
+
+        <input type="radio" id="otp" name="authMethod" value="otp" required>
+        <label for="otp">OTP</label>
+        <input type="radio" id="qr" name="authMethod" value="qr">
+        <label for="qr">QR Code</label>
+
+        <input type="submit" value="Get OTP" />
+    </form><br><br>
+
+    <form id="otp-form">
+        <input type="text" name="otp-field" id="otp-field" placeholder="One Time Password" />
+        <input type="file" name="qr-field" id="qr-field" />
+        <input type="button" name="verify-otp-btn" id="verify-otp-btn" value="Login">
+    </form><br>
+
+    <input type="button" name="resend-otp" id="resend-otp" value="Resend OTP" />
+
+    <p id="status-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+    <p id="msg-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+    <p id="error-msg" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+
+    <script>
+        const form = document.getElementById('log-in')
+        const resendOTP = document.getElementById('resend-otp')
+
+        form.addEventListener('submit', loginUser)
+        resendOTP.addEventListener('click', loginUser)
+
+        document.getElementById('msg-from-server').innerText = ''
+        document.getElementById('status-from-server').innerText = ''
+        document.getElementById('otp-field').hidden = true
+        document.getElementById('verify-otp-btn').hidden = true
+        document.getElementById('qr-field').hidden = true
+
+        // Verifying login credentials
+        async function loginUser(event) {
+            event.preventDefault()
+            const email = document.getElementById('email').value
+            const password = document.getElementById('password').value
+
+            globalThis.authMethod
+            document.getElementsByName('authMethod')
+                .forEach(radio => {
+                    if (radio.checked) {
+                        authMethod = radio.value
+                    }
+                })
+
+            document.getElementById('status-from-server').innerText = 'Loading...'
+            document.getElementById('msg-from-server').innerText = ''
+
+            const result = await fetch(`/user/login?verifMethod=${authMethod}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify({
+                    email,
+                    password
+                })
+            }).then(res => res.json())
+
+            if (result.status === 'ok') {
+                if (authMethod === 'otp') {
+                    document.getElementById('otp-field').hidden = false
+                    document.getElementById('verify-otp-btn').hidden = false
+                    document.getElementById('qr-field').hidden = true
+                } else if (authMethod === 'qr') {
+                    document.getElementById('otp-field').hidden = true
+                    document.getElementById('qr-field').hidden = false
+                    document.getElementById('verify-otp-btn').hidden = false
+                } else {
+                    document.getElementById('error-msg').innerText = 'Something went wrong'
+                }
+            }
+
+            document.getElementById('status-from-server').innerText = ''
+            document.getElementById('msg-from-server').innerText = result.message
+        }
+
+        // Verifying OTP
+        document.getElementById('verify-otp-btn').addEventListener('click', verify_otp)
+
+        async function verify_otp(event) {
+            event.preventDefault()
+            const otp = document.getElementById('otp-field').value
+            const email = document.getElementById('email').value
+
+            document.getElementById('status-from-server').innerText = 'Verifying OTP...'
+            document.getElementById('msg-from-server').innerText = ''
+
+            const result = await fetch('/user/validate-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify({
+                    email,
+                    otp
+                })
+            }).then(res => res.json())
+
+            if (result.status == 'ok')
+                localStorage.setItem('token', result.token)
+
+            document.getElementById('status-from-server').innerText = ''
+            document.getElementById('msg-from-server').innerText = result.message
+        }
+    </script>
+</body>
+
+</html>

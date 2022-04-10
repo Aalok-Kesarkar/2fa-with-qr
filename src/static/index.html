@@ -15,7 +15,7 @@
         <input type="text" name="email" id="email" placeholder="Email" required />
         <input type="password" name="password" id="password" placeholder="password" required />
         <input type="submit" value="Submit" />
-    </form>
+    </form><br>
     <input type="button" name="resend-otp" id="resend-otp" value="Resend OTP" />
     <p id="status-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
     <p id="msg-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
@@ -50,7 +50,7 @@
                 })
             }).then(res => res.json())
 
-            document.getElementById('status-from-server').innerText = result.status
+            document.getElementById('status-from-server').innerText = ''
             document.getElementById('msg-from-server').innerText = result.message
         }
 

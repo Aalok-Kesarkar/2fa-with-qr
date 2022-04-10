@@ -17,7 +17,7 @@
     </form>
     <p id="status-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
     <p id="msg-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
-    
+
     <script>
         const form = document.getElementById('verify-email')
         form.addEventListener('submit', verifyEmail)
@@ -45,6 +45,8 @@
                 // redirect : 'follow'
             }).then(res => res.json())
 
+            if (result.status == 'ok')
+                localStorage.setItem('token', result.token)
             document.getElementById('status-from-server').innerText = result.status
             document.getElementById('msg-from-server').innerText = result.message
         }
