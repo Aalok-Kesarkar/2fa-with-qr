@@ -47,8 +47,7 @@
                     name,
                     email,
                     password
-                }),
-                // redirect : 'follow'
+                })
             }).then(res => res.json())
 
             document.getElementById('status-from-server').innerText = result.status
@@ -68,8 +67,7 @@
                     'Content-Type': 'application/json'
                 }, body: JSON.stringify({
                     email
-                }),
-                // redirect : 'follow'
+                })
             }).then(res => res.json())
 
             document.getElementById('status-from-server').innerText = result.status

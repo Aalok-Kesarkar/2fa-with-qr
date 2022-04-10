@@ -37,8 +37,7 @@ router.post('/user/signin', async (req, res) => {
 // @route: POST /user/verify-email
 // @desc: Verify email ID set by new user by verifying OTP sent to email
 router.post('/user/verify-email', async (req, res) => {
-    // verify that OTP is matching, if yes then generate JWT token and send to user by res.send()
-    console.log(req.body)
+    // verify that OTP is matching, if yes then generate JWT token and send to user by res.send(
     try {
         const user = await User.findOne({ email: req.body.email })
         if (!user) { return res.status(404).json({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `User not found` }) }
