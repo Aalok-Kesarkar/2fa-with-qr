@@ -11,19 +11,6 @@ const router = new express.Router()
 
 const upload = multer()
 
-// @route: GET /user/signin
-// @desc: Render new user signin page
-router.get('/user/signin', (req, res) => {
-    res.render('signin')
-})
-
-// @route: GET /user/verify-email
-// @desc: Render email verification page
-router.get('/user/verify-email', (req, res) => {
-    console.log('aagaya')
-    res.render('verification')
-})
-
 // @route: POST /user/signin
 // @desc: Signin a new user with new login details
 router.post('/user/signin', async (req, res) => {
@@ -31,12 +18,12 @@ router.post('/user/signin', async (req, res) => {
     try {
         let user = new User(req.body)
 
-        userWithOTPSecret = await user.generateOTPSecretKey()
+        const { userWithOTPSecret, OTP } = await user.generateOTPSecretKey()
         user = userWithOTPSecret
         await user.save()
 
         const emailSubject = `OTP for email verification`
-        const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for verifying email is: <h2>${user.otp}</h2><br>One Time Password is valid for 3 minutes only`
+        const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for verifying email is: <h2>${OTP}</h2><br>One Time Password is valid for 3 minutes only`
 
         await emailSender.regularEmail(user.email, emailSubject, htmlText)
 
@@ -54,6 +41,8 @@ router.post('/user/verify-email', async (req, res) => {
     console.log(req.body)
     try {
         const user = await User.findOne({ email: req.body.email })
+        if (!user) { return res.status(404).json({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `User not found` }) }
+
         if (!user.isEmailVerified) {        // if email aready verified, send status:'error', message as email is already verified, in short don't send verification OTP again
             const tempSecret = user.tempSecretKey
 
@@ -74,15 +63,15 @@ router.post('/user/verify-email', async (req, res) => {
 
                 const emailSubject = `Email is verified succesfully`
                 const htmlText = `<h3>Dear ${user.name},</h3><br>Your email address is verified successfuly!</h2>`
-                await emailSender.regularEmail(user.email, emailSubject, htmlText)
+                emailSender.regularEmail(user.email, emailSubject, htmlText)
 
                 await user.save()
                 res.status(201).json({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Email verified succesfully`, user, token })
             } else {
-                res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `OTP doesn't match` })
+                res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `OTP doesn't match` })
             }
         } else {
-            res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, message: `Email has already been verified` })
+            res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Email has already been verified` })
         }
     } catch (err) {
         console.log(err)
@@ -95,6 +84,8 @@ router.post('/user/verify-email', async (req, res) => {
 router.post('/user/recreate-veri-otp', async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email })
+        if (!user) { return res.status(404).json({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `User not found` }) }
+
         if (!user.isEmailVerified) {    // if email aready verified, send status:'error', message as email is already verified, in short don't send verification OTP again
             const otp = await user.regenerateEmailVerificationOTP()
 
@@ -106,7 +97,7 @@ router.post('/user/recreate-veri-otp', async (req, res) => {
 
             // res.redirect('/verify-email')
         } else {
-            res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, message: `Email has already been verified` })
+            res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Email has already been verified, no need to verify again!` })
         }
     } catch (err) {
         res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: err })

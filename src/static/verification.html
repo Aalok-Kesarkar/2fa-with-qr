@@ -5,38 +5,48 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify</title>
+    <title>Verify Email</title>
 </head>
 
 <body>
-    <form id="verify">
-        <input type="text" name="email" id="email" placeholder="Email">
-        <input type="text" name="otpInputField" id="otpInputField" placeholder="One Time Password">
-        <input type="submit" />
+    <h1>Verify Email</h1>
+    <form id="verify-email">
+        <input type="text" name="email" id="email" placeholder="Email" required />
+        <input type="otp" name="otp" id="otp" placeholder="OTP" required />
+        <input type="submit" value="Submit" />
     </form>
-
+    <p id="status-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+    <p id="msg-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+    
     <script>
-        const form = document.getElementById('verify')
+        const form = document.getElementById('verify-email')
         form.addEventListener('submit', verifyEmail)
 
-
+        document.getElementById('msg-from-server').innerText = ''
+        document.getElementById('status-from-server').innerText = ''
 
         async function verifyEmail(event) {
-            // event.preventDefault()
-            const otp = document.getElementById('otpInputField').value
+            event.preventDefault()
             const email = document.getElementById('email').value
-            
-            const result = await fetch('/user/verify-email/abc', {
+            const otp = document.getElementById('otp').value
+
+            document.getElementById('status-from-server').innerText = 'Loading...'
+            document.getElementById('msg-from-server').innerText = ''
+
+            const result = await fetch('/user/verify-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 }, body: JSON.stringify({
+                    name,
                     email,
                     otp
-                })
-            })
+                }),
+                // redirect : 'follow'
+            }).then(res => res.json())
 
-            console.log(result)
+            document.getElementById('status-from-server').innerText = result.status
+            document.getElementById('msg-from-server').innerText = result.message
         }
     </script>
 </body>

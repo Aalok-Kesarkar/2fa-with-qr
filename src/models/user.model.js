@@ -83,18 +83,17 @@ userSchema.methods.generateAuthToken = async function () {
 
 // This should be used only in SignUp page
 userSchema.methods.generateOTPSecretKey = async function () {
-    const user = this
+    const userWithOTPSecret = this
 
     const tempSecret = speakeasy.generateSecret();
-    // const OTP = speakeasy.totp({
-    //     secret: tempSecret.base32,
-    //     encoding: 'base32'
-    // });
+    const OTP = speakeasy.totp({
+        secret: tempSecret.base32,
+        encoding: 'base32'
+    });
 
-    user.tempSecretKey = tempSecret.base32
-    // await user.save()
+    userWithOTPSecret.tempSecretKey = tempSecret.base32
 
-    return user
+    return { userWithOTPSecret, OTP }
 }
 
 // Need to create separate API to call this method
