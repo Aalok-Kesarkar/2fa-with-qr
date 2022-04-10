@@ -86,15 +86,15 @@ userSchema.methods.generateOTPSecretKey = async function () {
     const user = this
 
     const tempSecret = speakeasy.generateSecret();
-    const OTP = speakeasy.totp({
-        secret: tempSecret.base32,
-        encoding: 'base32'
-    });
+    // const OTP = speakeasy.totp({
+    //     secret: tempSecret.base32,
+    //     encoding: 'base32'
+    // });
 
     user.tempSecretKey = tempSecret.base32
-    await user.save()
+    // await user.save()
 
-    return OTP
+    return user
 }
 
 // Need to create separate API to call this method

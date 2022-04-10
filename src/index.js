@@ -1,5 +1,4 @@
 const express = require('express')
-const qr = require('qrcode')
 const path = require('path')
 require('./db/mongoose')
 
@@ -10,8 +9,7 @@ const app = express()
 app.use(express.json())
 express.urlencoded({ extended: false })
 
-app.use(express.static(path.join(__dirname, '../static')))
-
+app.use('/', express.static(path.join(__dirname, '/static')))
 const userRouter = require('./routers/user.router')
 
 // app.set('view engine', 'hbs')

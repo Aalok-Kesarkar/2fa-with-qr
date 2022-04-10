@@ -29,20 +29,21 @@ router.get('/user/verify-email', (req, res) => {
 router.post('/user/signin', async (req, res) => {
 
     try {
-        const user = new User(req.body)
-        // await user.save()
-        const otp = await user.generateOTPSecretKey()
+        let user = new User(req.body)
+
+        userWithOTPSecret = await user.generateOTPSecretKey()
+        user = userWithOTPSecret
+        await user.save()
 
         const emailSubject = `OTP for email verification`
-        const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for verifying email is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
+        const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for verifying email is: <h2>${user.otp}</h2><br>One Time Password is valid for 3 minutes only`
 
         await emailSender.regularEmail(user.email, emailSubject, htmlText)
 
-        // res.render('verification')
-        // res.send({ Phase: `DEVELOPEMENT PHASE`, message: `Check inbox of ${user.email} for email verification OTP!` })
-        res.redirect('/user/verify-email')
+        res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Check inbox of ${user.email} for email verification OTP!` })
+        // res.redirect('/user/verify-email')
     } catch (err) {
-        res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: ` ${err}` })
+        err.code === 11000 ? res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Can't use this email address` }) : res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: ` ${err}` })
     }
 })
 
@@ -53,7 +54,7 @@ router.post('/user/verify-email', async (req, res) => {
     console.log(req.body)
     try {
         const user = await User.findOne({ email: req.body.email })
-        if (!user.isEmailVerified) {        // if email aready verified, send error as email is already verified, in short don't send verification OTP again
+        if (!user.isEmailVerified) {        // if email aready verified, send status:'error', message as email is already verified, in short don't send verification OTP again
             const tempSecret = user.tempSecretKey
 
             // verify OTP here...
@@ -76,16 +77,16 @@ router.post('/user/verify-email', async (req, res) => {
                 await emailSender.regularEmail(user.email, emailSubject, htmlText)
 
                 await user.save()
-                res.status(201).json({ Phase: `DEVELOPEMENT PHASE`, message: `Email verified succesfully`, user, token })
+                res.status(201).json({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Email verified succesfully`, user, token })
             } else {
-                res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, error: `OTP doesn't match` })
+                res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `OTP doesn't match` })
             }
         } else {
             res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, message: `Email has already been verified` })
         }
     } catch (err) {
         console.log(err)
-        res.status(500).json({ Phase: `DEVELOPEMENT PHASE`, error: err })
+        res.status(500).json({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: err })
     }
 })
 
@@ -94,21 +95,21 @@ router.post('/user/verify-email', async (req, res) => {
 router.post('/user/recreate-veri-otp', async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email })
-        if (!user.isEmailVerified) {    // if email aready verified, send error as email is already verified, in short don't send verification OTP again
+        if (!user.isEmailVerified) {    // if email aready verified, send status:'error', message as email is already verified, in short don't send verification OTP again
             const otp = await user.regenerateEmailVerificationOTP()
 
             const emailSubject = `OTP for email verification`
             const htmlText = `<h3>Dear ${user.name},</h3><br>As per your request for new OTP...<br>OTP for verifying email is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only.`
             emailSender.regularEmail(user.email, emailSubject, htmlText)
 
-            res.send({ Phase: `DEVELOPEMENT PHASE`, message: `Email with OTP sent to ${user.email} successfully!` })
+            res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Email with OTP sent to ${user.email} successfully!` })
 
             // res.redirect('/verify-email')
         } else {
             res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, message: `Email has already been verified` })
         }
     } catch (err) {
-        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: err })
+        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: err })
     }
 })
 
@@ -126,9 +127,9 @@ router.post('/user/login', async (req, res) => {
                 const emailSubject = `OTP for logging in`
                 const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for logging in is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
                 emailSender.regularEmail(user.email, emailSubject, htmlText)
-                return res.send({ Phase: `DEVELOPEMENT PHASE`, message: `OTP sent to ${user.email} successfuly` })
+                return res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `OTP sent to ${user.email} successfuly` })
             } catch (err) {
-                return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Something went wrong: ${err}` })
+                return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Something went wrong: ${err}` })
             }
         case `qr`:
             try {
@@ -138,9 +139,9 @@ router.post('/user/login', async (req, res) => {
 
                 const emailMsg = await emailSender.verifyLoginByQR(user.email, user.name, imageBin)
 
-                return res.send({ Phase: `DEVELOPEMENT PHASE`, message: emailMsg })
+                return res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: emailMsg })
             } catch (err) {
-                return res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: err })
+                return res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: err })
             }
         default:
             return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, message: `Tampering with URL is not allowed.` })
@@ -158,12 +159,12 @@ router.post('/user/validate-login', async (req, res) => {
 
         if (isValid) {
             const token = await user.generateAuthToken()
-            res.send({ Phase: `DEVELOPEMENT PHASE`, message: `OTP verified and logged in successfully`, token })
+            res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `OTP verified and logged in successfully`, token })
         } else {
-            res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: 'OTP not correct or timed out' })
+            res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: 'OTP not correct or timed out' })
         }
     } catch (err) {
-        res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Error occured, ${err}` })
+        res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Error occured, ${err}` })
     }
 })
 
@@ -181,9 +182,9 @@ router.post('/user/logout', authenticate, async (req, res) => {
             return eachTokenObjInDb.token !== req.token // Return true if token does not match with token come with header
         })
         await req.user.save() // Save all tokens except one which match with request header token
-        res.send({ Phase: `DEVELOPEMENT PHASE`, message: `Successfully logged out` })
+        res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Successfully logged out` })
     } catch (err) {
-        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: `Server issue, coludn't logged out, try again` })
+        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Server issue, coludn't logged out, try again` })
     }
 })
 
@@ -193,9 +194,9 @@ router.post('/user/logout-all', authenticate, async (req, res) => {
     try {
         req.user.tokens = []
         await req.user.save()
-        res.send({ Phase: `DEVELOPEMENT PHASE`, message: `Successfully logged out of all devices` })
+        res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Successfully logged out of all devices` })
     } catch (err) {
-        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: `Can't perform logout operation, ${err}` })
+        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Can't perform logout operation, ${err}` })
     }
 })
 
@@ -209,7 +210,7 @@ router.patch('/user', authenticate, async (req, res) => {
     })
 
     if (!isValidUpdate) {
-        return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: 'Invalid update operation detected' })
+        return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: 'Invalid update operation detected' })
     }
 
     try {
@@ -217,9 +218,9 @@ router.patch('/user', authenticate, async (req, res) => {
             req.user[update] = req.body[update]
         })
         await req.user.save()
-        res.send({ Phase: `DEVELOPEMENT PHASE`, message: `Updated successfully!`, updated: req.user })
+        res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Updated successfully!`, updated: req.user })
     } catch (err) {
-        res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Can't update, ${err}` })
+        res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Can't update, ${err}` })
     }
 })
 
@@ -228,9 +229,9 @@ router.patch('/user', authenticate, async (req, res) => {
 router.delete('/user', authenticate, async (req, res) => {
     try {
         await req.user.remove()
-        res.send({ Phase: `DEVELOPEMENT PHASE`, message: `User Deleted :(`, deletedUser: req.user })
+        res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `User Deleted :(`, deletedUser: req.user })
     } catch (err) {
-        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: `Couldn't delete, ${err}` })
+        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Couldn't delete, ${err}` })
     }
 })
 
@@ -238,17 +239,17 @@ router.delete('/user', authenticate, async (req, res) => {
 // @desc: Verify login attempt with QR image uploaded to endpoint
 router.get('/user/verify-qr', upload.single('qr'), async (req, res) => {
     try {
-        if (req.file.mimetype != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Upload QR png file sent to email ID only` }) }
+        if (req.file.mimetype != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
 
         const user = await User.findOne({ email: req.body.email })
-        if (!user) { return res.status(404).send({ Phase: `DEVELOPEMENT PHASE`, error: `User not found` }) }
+        if (!user) { return res.status(404).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `User not found` }) }
 
         const buffer = req.file.buffer
         const png = PNG.sync.read(buffer)
 
         const code = jsQR(Uint8ClampedArray.from(png.data), png.width, png.height)
 
-        if (code === null) { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: `Please upload QR.png file only` }) }
+        if (code === null) { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Please upload QR.png file only` }) }
         const qrCodeText = code.data
 
         const secret = user.secretKey
@@ -262,12 +263,12 @@ router.get('/user/verify-qr', upload.single('qr'), async (req, res) => {
 
         if (validate) {
             const token = await user.generateAuthToken()
-            res.send({ Phase: `DEVELOPEMENT PHASE`, message: `QR verified and logged in successfully`, token })
+            res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `QR verified and logged in successfully`, token })
         } else {
-            res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, error: 'QR not correct or timed out' })
+            res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: 'QR not correct or timed out' })
         }
     } catch (err) {
-        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, error: `${err}` })
+        res.status(500).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `${err}` })
     }
 })
 

@@ -6,6 +6,8 @@ const nodemailer = require('nodemailer');
 
 const mailTransporter = nodemailer.createTransport({
     host: 'smtp.office365.com',
+    secureConnection: false, 
+    port: 587,
     auth: {
         user: 'aalok.temp@outlook.com',
         pass: 'hFuy&*t82hfy'
