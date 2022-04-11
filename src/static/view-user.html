@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+
+<body>
+    <h1>User Profile</h1>
+    <input type="button" id="profile-btn" value="View Profile">
+    <input type="button" id="logout" value="Logout">
+    <p id="name"></p>
+    <p id="email"></p>
+    <p id="age"></p>
+    <p id="isEmailVerified"></p>
+
+    <script>
+        document.getElementById('profile-btn').addEventListener('click', showProfile)
+        document.getElementById('logout').addEventListener('click', logout)
+
+        async function showProfile(event) {
+            event.preventDefault()
+
+            if (localStorage.getItem('token')) {
+                const result = await fetch('/user', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }).then(res => res.json())
+
+                if (result.status === 'ok') {
+                    document.getElementById('name').innerText = 'Name: ' + result.user.name
+                    document.getElementById('email').innerText = 'Email: ' + result.user.email
+                    document.getElementById('age').innerText = 'Age: ' + result.user.age
+                    document.getElementById('isEmailVerified').innerText = 'Is Email Verified? : ' + result.user.isEmailVerified
+                } else if (result.status === 'error') {
+                    document.getElementById('profile').innerText = result.message
+                }
+            } else {
+                document.getElementById('name').innerText = 'Please login to view user profile'
+            }
+        }
+
+        async function logout(event) {
+            event.preventDefault()
+
+            if (localStorage.getItem('token')) {
+                const result = await fetch('/user/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }).then(res => res.json())
+                if (result.status === 'ok') {
+                    document.getElementById('name').innerText = result.message
+                    document.getElementById('email').innerText = ''
+                    document.getElementById('age').innerText = ''
+                    document.getElementById('isEmailVerified').innerText = ''
+                    localStorage.removeItem('token')
+                } else if (result.status === 'error') {
+                    document.getElementById('name').innerText = result.message
+                }
+            } else {
+                document.getElementById('name').innerText = 'Not logged in...'
+            }
+        }
+    </script>
+</body>
+
+</html>

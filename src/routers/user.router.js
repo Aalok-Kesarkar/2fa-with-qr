@@ -170,7 +170,7 @@ router.post('/user/validate-login', async (req, res) => {
 // @route: GET /user
 // @desc: Show users profile after logging in
 router.get('/user', authenticate, async (req, res) => {
-    res.send({ Phase: `DEVELOPEMENT PHASE`, user: req.user })
+    res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', user: req.user })
 })
 
 // @route: POST /user/logout

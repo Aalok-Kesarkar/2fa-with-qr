@@ -19,7 +19,7 @@
         <input type="radio" id="qr" name="authMethod" value="qr">
         <label for="qr">QR Code</label>
 
-        <input type="submit" value="Get OTP" />
+        <input type="submit" value="Get Code" />
     </form><br><br>
 
     <form id="otp-form">
@@ -27,12 +27,11 @@
         <input type="file" name="qr-field" id="qr-field" />
         <input type="button" name="verify-otp-btn" id="verify-otp-btn" value="Login">
     </form><br>
-
-    <input type="button" name="resend-otp" id="resend-otp" value="Resend OTP" />
-
     <p id="status-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
     <p id="msg-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
     <p id="error-msg" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+    <input type="button" name="resend-otp" id="resend-otp" value="Resend OTP" style="margin-top: 100px;"/>
+
 
     <script>
         const form = document.getElementById('log-in')
@@ -53,7 +52,7 @@
             const email = document.getElementById('email').value
             const password = document.getElementById('password').value
 
-            globalThis.authMethod
+            let authMethod
             document.getElementsByName('authMethod')
                 .forEach(radio => {
                     if (radio.checked) {
@@ -91,6 +90,10 @@
             document.getElementById('status-from-server').innerText = ''
             document.getElementById('msg-from-server').innerText = result.message
         }
+
+        // create different POST request depending on authMethod (for QR or OTP)...
+        // ...
+        // ...
 
         // Verifying OTP
         document.getElementById('verify-otp-btn').addEventListener('click', verify_otp)
