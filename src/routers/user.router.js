@@ -234,16 +234,28 @@ router.delete('/user', authenticate, async (req, res) => {
     }
 })
 
-// @route: GET /user/verify-qr
+// @route: POST /user/verify-qr
 // @desc: Verify login attempt with QR image uploaded to endpoint
-router.get('/user/verify-qr', upload.single('qr'), async (req, res) => {
+router.post('/user/verify-qr', upload.single('qr'), async (req, res) => {
     try {
-        if (req.file.mimetype != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
-
         const user = await User.findOne({ email: req.body.email })
         if (!user) { return res.status(404).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `User not found` }) }
 
+
+        // req.file ? console.log('its here') : console.log('atak gya lavda')
+
+
+        // console.log(req)
+        // const removeData = req.body.qr.replace('data:','')
+        // const mimeType = removeData.split(';')
+        // console.log(mimeType)
+        // if (mimeType[0] != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
+        if (req.file.mimetype != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
+
+        console.log('there you are')
+        console.log(req.file)
         const buffer = req.file.buffer
+        // const buffer = req.body.qr
         const png = PNG.sync.read(buffer)
 
         const code = jsQR(Uint8ClampedArray.from(png.data), png.width, png.height)

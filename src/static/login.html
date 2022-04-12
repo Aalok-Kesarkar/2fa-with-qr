@@ -24,13 +24,16 @@
 
     <form id="otp-form">
         <input type="text" name="otp-field" id="otp-field" placeholder="One Time Password" />
-        <input type="file" name="qr-field" id="qr-field" />
         <input type="button" name="verify-otp-btn" id="verify-otp-btn" value="Login">
+        <!-- onchange="previewFile()" -->
+        <input type="file" id="qr_field"><br>
+        <img src="" height="200" alt="QR preview..." hidden>
+        <input type="button" name="verify-qr-btn" id="verify-qr-btn" value="Login">
     </form><br>
     <p id="status-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
     <p id="msg-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
     <p id="error-msg" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
-    <input type="button" name="resend-otp" id="resend-otp" value="Resend OTP" style="margin-top: 100px;"/>
+    <input type="button" name="resend-otp" id="resend-otp" value="Resend OTP" style="margin-top: 100px;" />
 
 
     <script>
@@ -40,11 +43,13 @@
         form.addEventListener('submit', loginUser)
         resendOTP.addEventListener('click', loginUser)
 
-        document.getElementById('msg-from-server').innerText = ''
-        document.getElementById('status-from-server').innerText = ''
+        document.getElementById('msg-from-server').innerText = document.getElementById('status-from-server').innerText = ''
+
         document.getElementById('otp-field').hidden = true
         document.getElementById('verify-otp-btn').hidden = true
-        document.getElementById('qr-field').hidden = true
+
+        // document.getElementById('qr-field').hidden = true
+        // document.getElementById('verify-qr-btn').hidden = true
 
         // Verifying login credentials
         async function loginUser(event) {
@@ -75,13 +80,15 @@
 
             if (result.status === 'ok') {
                 if (authMethod === 'otp') {
+                    document.getElementById('qr-field').hidden = true
+
                     document.getElementById('otp-field').hidden = false
                     document.getElementById('verify-otp-btn').hidden = false
-                    document.getElementById('qr-field').hidden = true
                 } else if (authMethod === 'qr') {
                     document.getElementById('otp-field').hidden = true
+
                     document.getElementById('qr-field').hidden = false
-                    document.getElementById('verify-otp-btn').hidden = false
+                    document.getElementById('verify-qr-btn').hidden = false
                 } else {
                     document.getElementById('error-msg').innerText = 'Something went wrong'
                 }
@@ -91,36 +98,99 @@
             document.getElementById('msg-from-server').innerText = result.message
         }
 
-        // create different POST request depending on authMethod (for QR or OTP)...
-        // ...
-        // ...
+        // Verifying with 2 factor authentication
+        if (document.getElementById('verify-otp-btn').hidden === false) {
+            // If OTP is expected...
+            console.log('otp btn available')
 
-        // Verifying OTP
-        document.getElementById('verify-otp-btn').addEventListener('click', verify_otp)
+            document.getElementById('verify-otp-btn').addEventListener('click', verify_otp)
 
-        async function verify_otp(event) {
-            event.preventDefault()
-            const otp = document.getElementById('otp-field').value
-            const email = document.getElementById('email').value
+            async function verify_otp(event) {
+                event.preventDefault()
+                const otp = document.getElementById('otp-field').value
+                const email = document.getElementById('email').value
 
-            document.getElementById('status-from-server').innerText = 'Verifying OTP...'
-            document.getElementById('msg-from-server').innerText = ''
+                document.getElementById('status-from-server').innerText = 'Verifying OTP...'
+                document.getElementById('msg-from-server').innerText = ''
 
-            const result = await fetch('/user/validate-login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }, body: JSON.stringify({
-                    email,
-                    otp
-                })
-            }).then(res => res.json())
+                const result = await fetch('/user/validate-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }, body: JSON.stringify({
+                        email,
+                        otp
+                    })
+                }).then(res => res.json())
 
-            if (result.status == 'ok')
-                localStorage.setItem('token', result.token)
+                if (result.status == 'ok')
+                    localStorage.setItem('token', result.token)
 
-            document.getElementById('status-from-server').innerText = ''
-            document.getElementById('msg-from-server').innerText = result.message
+                document.getElementById('status-from-server').innerText = ''
+                document.getElementById('msg-from-server').innerText = result.message
+            }
+        } else if (document.getElementById('verify-qr-btn').hidden === false) {
+            // IF QR code is expected...
+            document.getElementById('verify-qr-btn').addEventListener('click', verify_qr)
+
+            function verify_qr(event) {
+                event.preventDefault()
+                const email = document.getElementById('email').value
+
+
+
+
+
+
+
+
+                document.getElementById('status-from-server').innerText = 'Verifying QR...'
+                document.getElementById('msg-from-server').innerText = ''
+
+                // function previewFile() {
+                const preview = document.querySelector('img');
+                const file = document.querySelector('#qr_field').files[0];
+                const reader = new FileReader();
+
+                const qrBase64 = reader.addEventListener("load", async function () {
+                    // convert image file to base64 string
+                    preview.src = reader.result;
+                    let qr = preview.src
+                    console.log(qr)
+
+                    const result = await fetch('/user/verify-qr', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }, body: JSON.stringify({
+                            email,
+                            qr
+                        })
+                    }).then(res => res.json())
+                    console.log(result)
+    
+                    if (result.status == 'ok')
+                        localStorage.setItem('token', result.token)
+    
+                    document.getElementById('status-from-server').innerText = ''
+                    document.getElementById('msg-from-server').innerText = result.message
+                }, false);
+
+                if (file) {
+                    reader.readAsDataURL(file);
+                }
+                // }
+
+                // console.log('qr................', qrBase64)
+
+
+
+
+
+
+
+
+            }
         }
     </script>
 </body>
