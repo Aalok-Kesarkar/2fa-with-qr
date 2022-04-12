@@ -10,63 +10,60 @@
 
 <body>
     <h1>Login page</h1>
-    <form id="log-in">
-        <input type="text" name="email" id="email" placeholder="Email" required />
-        <input type="password" name="password" id="password" placeholder="password" required />
+    <form id="log_in">
+        <input type="text" name="user_email" id="user_email" placeholder="Email" required />
+        <input type="password" name="user_password" id="user_password" placeholder="Password" required />
 
-        <input type="radio" id="otp" name="authMethod" value="otp" required>
+        <input type="radio" id="otp" name="auth_method" value="otp" required>
         <label for="otp">OTP</label>
-        <input type="radio" id="qr" name="authMethod" value="qr">
+        <input type="radio" id="qr" name="auth_method" value="qr">
         <label for="qr">QR Code</label>
 
         <input type="submit" value="Get Code" />
     </form><br><br>
 
-    <form id="otp-form">
-        <input type="text" name="otp-field" id="otp-field" placeholder="One Time Password" />
-        <input type="button" name="verify-otp-btn" id="verify-otp-btn" value="Login">
-        <!-- onchange="previewFile()" -->
+    <form id="otp_form">
+        <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" />
+        <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login">
+
         <input type="file" id="qr_field"><br>
         <img src="" height="200" alt="QR preview..." hidden>
-        <input type="button" name="verify-qr-btn" id="verify-qr-btn" value="Login">
+        <input type="button" name="verify_qr_btn" id="verify_qr_btn" value="Login">
     </form><br>
-    <p id="status-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
-    <p id="msg-from-server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
-    <p id="error-msg" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
-    <input type="button" name="resend-otp" id="resend-otp" value="Resend OTP" style="margin-top: 100px;" />
+    <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+    <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" style="margin-top: 100px;" />
 
 
     <script>
-        const form = document.getElementById('log-in')
-        const resendOTP = document.getElementById('resend-otp')
+        const form = document.getElementById('log_in')
+        const resendOTP = document.getElementById('resend_otp')
 
         form.addEventListener('submit', loginUser)
         resendOTP.addEventListener('click', loginUser)
 
-        document.getElementById('msg-from-server').innerText = document.getElementById('status-from-server').innerText = ''
+        document.getElementById('msg_from_server').innerText = ''
 
-        document.getElementById('otp-field').hidden = true
-        document.getElementById('verify-otp-btn').hidden = true
+        document.getElementById('otp_field').hidden = true
+        document.getElementById('verify_otp_btn').hidden = true
 
-        // document.getElementById('qr-field').hidden = true
-        // document.getElementById('verify-qr-btn').hidden = true
+        document.getElementById('qr_field').hidden = true
+        document.getElementById('verify_qr_btn').hidden = true
 
         // Verifying login credentials
         async function loginUser(event) {
             event.preventDefault()
-            const email = document.getElementById('email').value
-            const password = document.getElementById('password').value
+            const email = document.getElementById('user_email').value
+            const password = document.getElementById('user_password').value
 
             let authMethod
-            document.getElementsByName('authMethod')
+            document.getElementsByName('auth_method')
                 .forEach(radio => {
                     if (radio.checked) {
                         authMethod = radio.value
                     }
                 })
 
-            document.getElementById('status-from-server').innerText = 'Loading...'
-            document.getElementById('msg-from-server').innerText = ''
+            document.getElementById('msg_from_server').innerText = 'Loading...'
 
             const result = await fetch(`/user/login?verifMethod=${authMethod}`, {
                 method: 'POST',
@@ -80,116 +77,97 @@
 
             if (result.status === 'ok') {
                 if (authMethod === 'otp') {
-                    document.getElementById('qr-field').hidden = true
+                    document.getElementById('qr_field').hidden = true
+                    document.getElementById('verify_qr_btn').hidden = true
 
-                    document.getElementById('otp-field').hidden = false
-                    document.getElementById('verify-otp-btn').hidden = false
+                    document.getElementById('otp_field').hidden = false
+                    document.getElementById('verify_otp_btn').hidden = false
+
+                    document.getElementById('msg_from_server').innerText = result.message
                 } else if (authMethod === 'qr') {
-                    document.getElementById('otp-field').hidden = true
+                    document.getElementById('otp_field').hidden = true
+                    document.getElementById('verify_otp_btn').hidden = true
 
-                    document.getElementById('qr-field').hidden = false
-                    document.getElementById('verify-qr-btn').hidden = false
-                } else {
-                    document.getElementById('error-msg').innerText = 'Something went wrong'
+                    document.getElementById('qr_field').hidden = false
+                    document.getElementById('verify_qr_btn').hidden = false
+
+                    document.getElementById('msg_from_server').innerText = result.message
                 }
+            } else if (result.status === 'error') {
+                document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
+                console.log('ERROR: ', result.message)
             }
 
-            document.getElementById('status-from-server').innerText = ''
-            document.getElementById('msg-from-server').innerText = result.message
-        }
-
-        // Verifying with 2 factor authentication
-        if (document.getElementById('verify-otp-btn').hidden === false) {
+            // Verifying with 2 factor authentication
             // If OTP is expected...
-            console.log('otp btn available')
+            if (document.getElementById('verify_otp_btn').hidden === false) {
 
-            document.getElementById('verify-otp-btn').addEventListener('click', verify_otp)
+                document.getElementById('verify_otp_btn').addEventListener('click', verify_otp)
 
-            async function verify_otp(event) {
-                event.preventDefault()
-                const otp = document.getElementById('otp-field').value
-                const email = document.getElementById('email').value
+                async function verify_otp(event) {
+                    event.preventDefault()
+                    const otp = document.getElementById('otp_field').value
+                    const email = document.getElementById('user_email').value
 
-                document.getElementById('status-from-server').innerText = 'Verifying OTP...'
-                document.getElementById('msg-from-server').innerText = ''
+                    document.getElementById('msg_from_server').innerText = 'Verifying OTP...'
 
-                const result = await fetch('/user/validate-login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }, body: JSON.stringify({
-                        email,
-                        otp
-                    })
-                }).then(res => res.json())
-
-                if (result.status == 'ok')
-                    localStorage.setItem('token', result.token)
-
-                document.getElementById('status-from-server').innerText = ''
-                document.getElementById('msg-from-server').innerText = result.message
-            }
-        } else if (document.getElementById('verify-qr-btn').hidden === false) {
-            // IF QR code is expected...
-            document.getElementById('verify-qr-btn').addEventListener('click', verify_qr)
-
-            function verify_qr(event) {
-                event.preventDefault()
-                const email = document.getElementById('email').value
-
-
-
-
-
-
-
-
-                document.getElementById('status-from-server').innerText = 'Verifying QR...'
-                document.getElementById('msg-from-server').innerText = ''
-
-                // function previewFile() {
-                const preview = document.querySelector('img');
-                const file = document.querySelector('#qr_field').files[0];
-                const reader = new FileReader();
-
-                const qrBase64 = reader.addEventListener("load", async function () {
-                    // convert image file to base64 string
-                    preview.src = reader.result;
-                    let qr = preview.src
-                    console.log(qr)
-
-                    const result = await fetch('/user/verify-qr', {
+                    const result = await fetch('/user/validate-login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         }, body: JSON.stringify({
                             email,
-                            qr
+                            otp
                         })
                     }).then(res => res.json())
-                    console.log(result)
-    
+
                     if (result.status == 'ok')
                         localStorage.setItem('token', result.token)
-    
-                    document.getElementById('status-from-server').innerText = ''
-                    document.getElementById('msg-from-server').innerText = result.message
-                }, false);
 
-                if (file) {
-                    reader.readAsDataURL(file);
+                    document.getElementById('msg_from_server').innerText = result.message
                 }
-                // }
 
-                // console.log('qr................', qrBase64)
+                // IF QR code is expected...
+            } else if (document.getElementById('verify_qr_btn').hidden === false) {
+                document.getElementById('verify_qr_btn').addEventListener('click', verify_qr)
 
+                function verify_qr(event) {
+                    event.preventDefault()
+                    const email = document.getElementById('user_email').value
 
+                    document.getElementById('msg_from_server').innerText = 'Verifying QR...'
 
+                    const preview = document.querySelector('img');
+                    const file = document.querySelector('#qr_field').files[0];
+                    const reader = new FileReader();
 
+                    const qrBase64 = reader.addEventListener("load", async function () {
+                        // convert image file to base64 string
+                        preview.src = reader.result;
+                        let qr = preview.src
 
+                        const result = await fetch('/user/verify-qr', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }, body: JSON.stringify({
+                                email,
+                                qr
+                            })
+                        }).then(res => res.json())
 
+                        if (result.status == 'ok')
+                            localStorage.setItem('token', result.token)
 
+                        document.getElementById('msg_from_server').innerText = result.message
+                    }, false);
 
+                    if (file) {
+                        reader.readAsDataURL(file);
+                    }
+                }
+            } else {
+                console.log('Error throwed')
             }
         }
     </script>

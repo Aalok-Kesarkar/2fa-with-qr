@@ -245,17 +245,18 @@ router.post('/user/verify-qr', upload.single('qr'), async (req, res) => {
         // req.file ? console.log('its here') : console.log('atak gya lavda')
 
 
-        // console.log(req)
-        // const removeData = req.body.qr.replace('data:','')
-        // const mimeType = removeData.split(';')
-        // console.log(mimeType)
-        // if (mimeType[0] != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
-        if (req.file.mimetype != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
-
-        console.log('there you are')
-        console.log(req.file)
-        const buffer = req.file.buffer
-        // const buffer = req.body.qr
+        console.log(req.body.qr)
+        const removeData = req.body.qr.replace('data:', '')
+        const mimeType = removeData.split(';')
+        if (mimeType[0] != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
+        // if (req.file.mimetype != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
+        const properBase64 = mimeType[1].replace('base64,', '')
+        console.log(mimeType)
+        // const buffer = req.file.buffer
+        // const string64 = buffer.toString('base64')
+        // console.log(string64)
+        const buffer = Buffer.from(properBase64, 'base64url')
+        console.log('converted buffer', buffer)
         const png = PNG.sync.read(buffer)
 
         const code = jsQR(Uint8ClampedArray.from(png.data), png.width, png.height)
@@ -271,7 +272,7 @@ router.post('/user/verify-qr', upload.single('qr'), async (req, res) => {
             token: qrCodeText,
             window: 5
         })
-
+        
         if (validate) {
             const token = await user.generateAuthToken()
             res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `QR verified and logged in successfully`, token })

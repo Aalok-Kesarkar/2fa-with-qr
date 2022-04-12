@@ -24,6 +24,15 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
+    contact: {
+        type: Number,
+        unique: true,
+        trim: true
+    },
+    address: {
+        type: String,
+        trim: true
+    },
     password: {
         type: String,
         required: true,
@@ -62,12 +71,6 @@ const userSchema = new mongoose.Schema({
     }]
 }, {
     timestamps: true
-})
-
-userSchema.virtual('virtualTasks', {
-    ref: 'Task',
-    localField: '_id',
-    foreignField: 'owner'
 })
 
 userSchema.methods.generateAuthToken = async function () {
@@ -133,7 +136,6 @@ userSchema.methods.toJSON = function () {
 
     delete userObject.password
     delete userObject.tokens
-    delete userObject.avatar
 
     return userObject
 }
