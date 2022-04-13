@@ -11,7 +11,7 @@
 <body>
     <h1>Signin page</h1>
     <form id="sign-in">
-
+        <!-- Form for basic info of user -->
         <input type="text" name="user_name" id="user_name" placeholder="Name" required />
         <input type="text" name="user_email" id="user_email" placeholder="Email" required />
         <input type="number" name="contact_num" id="contact_num" placeholder="Mobile No." />
@@ -23,25 +23,32 @@
     </form><br>
 
     <form id="otp_form">
-        <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" />
-        <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login">
+        <!-- following 2 fields will be hidden by default,
+            If email with OTP sent to user mail ID successfully, then only these field will be visible on page -->
+        <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" hidden />
+        <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login" hidden>
+
     </form><br>
 
     <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" />
+
+    <!-- if user enters OTP then only following link will bw appear on page -->
     <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
+
+    <!-- 'p' field is to show message recieved from backend server, like success or error messages -->
     <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
 
+    <!-- JAVASCRIPT CODE BELOW -->
     <script>
         const form = document.getElementById('sign-in')
         const resendOTP = document.getElementById('resend_otp')
 
+        // If user clicks on submit button, a javascript function 'signinUser' will be called, which is defined below in this code.
         form.addEventListener('submit', signinUser)
+        // added 'resend OTP' button in HTML page.. incase user not recieved OTP bu mail.
         resendOTP.addEventListener('click', resendRequest)
 
         document.getElementById('msg_from_server').innerText = ''
-        document.getElementById('otp_field').hidden = true
-        document.getElementById('verify_otp_btn').hidden = true
-
 
         async function signinUser(event) {
             event.preventDefault()
@@ -54,6 +61,7 @@
 
             document.getElementById('msg_from_server').innerText = 'Loading...'
 
+            // fetch request to backend server
             const result = await fetch('/user/signin', {
                 method: 'POST',
                 headers: {
@@ -68,6 +76,7 @@
                 })
             }).then(res => res.json())
 
+            // after comunicating with server, if server sends success message.. then only following code will be executed.
             if (result.status === 'ok') {
                 document.getElementById('otp_field').hidden = false
                 document.getElementById('verify_otp_btn').hidden = false
@@ -102,12 +111,14 @@
                         console.log('ERROR: ', result.message)
                     }
                 }
+                // if server sends encounter error, following code snippet will be executed
             } else if (result.status === 'error') {
                 document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
                 console.log('ERROR: ', result.message)
             }
         }
 
+        // function for 'resend OTP' to user email ID
         async function resendRequest(event) {
             event.preventDefault()
             const email = document.getElementById('user_email').value

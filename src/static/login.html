@@ -11,9 +11,11 @@
 <body>
     <h1>Login page</h1>
     <form id="log_in">
+        <!-- We will expect email and correct password from user for logging in -->
         <input type="text" name="user_email" id="user_email" placeholder="Email" required />
         <input type="password" name="user_password" id="user_password" placeholder="Password" required />
 
+        <!-- User need to choose any one authentication method (OTP or QR) for 2 step authentication -->
         <input type="radio" id="otp" name="auth_method" value="otp" required>
         <label for="otp">OTP</label>
         <input type="radio" id="qr" name="auth_method" value="qr">
@@ -23,39 +25,41 @@
     </form><br><br>
 
     <form id="otp_form">
-        <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" />
-        <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login">
+        <!-- following fields will be 'hidden' by default, depend on selection of OTP or QR following fields will be visible -->
+        <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" hidden />
+        <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login" hidden />
 
-        <input type="file" id="qr_field"><br>
-        <img src="" height="200" alt="QR preview..." hidden>
-        <input type="button" name="verify_qr_btn" id="verify_qr_btn" value="Login">
+        <input type="file" id="qr_field" hidden />
+        <img src="" height="200" alt="QR preview..." hidden />
+        <input type="button" name="verify_qr_btn" id="verify_qr_btn" value="Login" hidden />
+
     </form><br>
+
     <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
+
     <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+
     <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" style="margin-top: 100px;" />
 
-
+    <!-- JAVASCRIPT CODE BELOW -->
     <script>
         const form = document.getElementById('log_in')
         const resendOTP = document.getElementById('resend_otp')
 
+        // on subimitting email and password by user, 'loginUser' function will be called.
         form.addEventListener('submit', loginUser)
         resendOTP.addEventListener('click', loginUser)
 
         document.getElementById('msg_from_server').innerText = ''
 
-        document.getElementById('otp_field').hidden = true
-        document.getElementById('verify_otp_btn').hidden = true
-
-        document.getElementById('qr_field').hidden = true
-        document.getElementById('verify_qr_btn').hidden = true
-
-        // Verifying login credentials
+        // 'loginUser' function definition
+        // at first we will verify that user exists or not in our mongoDB database with these email and password.
         async function loginUser(event) {
             event.preventDefault()
             const email = document.getElementById('user_email').value
             const password = document.getElementById('user_password').value
 
+            // extract authMethod (OTP or QR) from radio buttons in HTML code
             let authMethod
             document.getElementsByName('auth_method')
                 .forEach(radio => {
@@ -66,6 +70,7 @@
 
             document.getElementById('msg_from_server').innerText = 'Loading...'
 
+            // fetch request to backend by sending email and password entered by user.
             const result = await fetch(`/user/login?verifMethod=${authMethod}`, {
                 method: 'POST',
                 headers: {
@@ -174,7 +179,7 @@
                     }
                 }
             } else {
-                console.log('Error throwed')
+                console.log('Error thrown')
             }
         }
     </script>
