@@ -6,10 +6,10 @@ const emailSender = require('../email-sending/emailSender')
 const QRCode = require('qrcode')
 const jsQR = require('jsqr')
 const { PNG } = require('pngjs')
-const multer = require('multer')
+// const multer = require('multer')
 const router = new express.Router()
 
-const upload = multer()
+// const upload = multer()
 
 // @route: POST /user/signin
 // @desc: Signin a new user with new login details
@@ -236,27 +236,18 @@ router.delete('/user', authenticate, async (req, res) => {
 
 // @route: POST /user/verify-qr
 // @desc: Verify login attempt with QR image uploaded to endpoint
-router.post('/user/verify-qr', upload.single('qr'), async (req, res) => {
+router.post('/user/verify-qr', async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email })
         if (!user) { return res.status(404).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `User not found` }) }
 
+        const removeDataPart = req.body.qr.replace('data:', '')
+        const getMimeType = removeDataPart.split(';')
+        if (getMimeType[0] != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
 
-        // req.file ? console.log('its here') : console.log('atak gya lavda')
+        const base64StringOfQR = getMimeType[1].replace('base64,', '')
 
-
-        console.log(req.body.qr)
-        const removeData = req.body.qr.replace('data:', '')
-        const mimeType = removeData.split(';')
-        if (mimeType[0] != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
-        // if (req.file.mimetype != 'image/png') { return res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Upload QR png file sent to email ID only` }) }
-        const properBase64 = mimeType[1].replace('base64,', '')
-        console.log(mimeType)
-        // const buffer = req.file.buffer
-        // const string64 = buffer.toString('base64')
-        // console.log(string64)
-        const buffer = Buffer.from(properBase64, 'base64url')
-        console.log('converted buffer', buffer)
+        const buffer = Buffer.from(base64StringOfQR, 'base64url')
         const png = PNG.sync.read(buffer)
 
         const code = jsQR(Uint8ClampedArray.from(png.data), png.width, png.height)
@@ -272,7 +263,7 @@ router.post('/user/verify-qr', upload.single('qr'), async (req, res) => {
             token: qrCodeText,
             window: 5
         })
-        
+
         if (validate) {
             const token = await user.generateAuthToken()
             res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `QR verified and logged in successfully`, token })

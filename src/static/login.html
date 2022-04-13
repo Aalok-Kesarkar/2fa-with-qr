@@ -30,6 +30,7 @@
         <img src="" height="200" alt="QR preview..." hidden>
         <input type="button" name="verify_qr_btn" id="verify_qr_btn" value="Login">
     </form><br>
+    <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
     <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
     <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" style="margin-top: 100px;" />
 
@@ -121,9 +122,10 @@
                         })
                     }).then(res => res.json())
 
-                    if (result.status == 'ok')
+                    if (result.status == 'ok') {
                         localStorage.setItem('token', result.token)
-
+                        document.getElementById('view_user_profile_link').hidden = false
+                    }
                     document.getElementById('msg_from_server').innerText = result.message
                 }
 
@@ -134,11 +136,16 @@
                 function verify_qr(event) {
                     event.preventDefault()
                     const email = document.getElementById('user_email').value
+                    const file = document.querySelector('#qr_field').files[0];
+                    // const img = document.getElementById('qr_field')
 
                     document.getElementById('msg_from_server').innerText = 'Verifying QR...'
 
+                    window.addEventListener('paste', e => {
+                        file.files[0] = e.clipboardData.files;
+                    });
+
                     const preview = document.querySelector('img');
-                    const file = document.querySelector('#qr_field').files[0];
                     const reader = new FileReader();
 
                     const qrBase64 = reader.addEventListener("load", async function () {
