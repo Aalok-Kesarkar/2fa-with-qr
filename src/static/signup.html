@@ -21,32 +21,30 @@
         <nav class="navbar navbar-expand-lg navbar-light" style="background-color: green;">
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
             </button>
             <div class="pull-right">
-              <a style="color:white; font-size: 30px;"
-                 href="../ecommercejavascript/index.html">Ecommerce
-                 Website</a>
+                <a style="color:white; font-size: 30px;" href="index.html">Jupiter</a>
 
 
             </div>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/index.html">Home</a>
+                        <a style="color:white;" class="nav-link" href="index.html">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/product.html">Products</a>
+                        <a style="color:white;" class="nav-link" href="product.html">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/cart.html">Cart</a>
+                        <a style="color:white;" class="nav-link" href="cart.html">Cart</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/aboutus.html">About Us</a>
+                        <a style="color:white;" class="nav-link" href="aboutus.html">About Us</a>
                     </li>
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/team.html" tabindex="-1" aria-disabled="true">Our
+                        <a style="color:white;" class="nav-link" href="team.html" tabindex="-1" aria-disabled="true">Our
                             Team</a>
                     </li>
                 </ul>
@@ -57,22 +55,22 @@
 
     <section id="Signin">
         <center>
-            <div class="container">
+            <!-- <div class="container"> -->
             <h1>Create new account</h1>
-            <div class="row">
-            <div class="col-md-6">
-            <form class="contact-form">
-            <div class="form-group">
+            <!-- <div class="row">
+                    <div class="col-md-6">
+                        <form class="contact-form">
+                            <div class="form-group"> -->
         </center>
 
         <center>
-            <form id="sign-in">
+            <form id="sign_in">
                 <!-- Form for basic info of user -->
                 <div class="form-group">
-                    <input type="text" name="user_name" id="user_name" placeholder="Name"  />
+                    <input type="text" name="user_name" id="user_name" placeholder="Name" />
                 </div>
                 <div class="form-group">
-                    <input type="text" name="user_email" id="user_email" placeholder="Email"  />
+                    <input type="text" name="user_email" id="user_email" placeholder="Email" />
                 </div>
                 <div class="form-group">
                     <input type="text" name="contact_num" id="contact_num" placeholder="Mobile No." />
@@ -87,9 +85,11 @@
                     <input type="password" name="user_password" id="user_password" placeholder="Password" required />
                 </div>
                 <div class="form-group">
-                    <input type="Confirm password" name="user_Confirm password" id="user_Confirm password" placeholder="Confirm Password" required />
+                    <input type="password" name="user_confirm_password" id="user_confirm_password"
+                        placeholder="Confirm Password" required />
                 </div>
-                <input type="submit" onclick="validateForm()" value="Submit" />
+                <!-- <input type="submit" onclick="validateForm()" value="Submit" /> -->
+                <input type="submit" value="Submit" />
             </form><br>
 
 
@@ -104,9 +104,7 @@
 
             <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" />
             <div>
-                <h1>Already have an account? <a style="font-size:25px; "
-                    href="../static\login.html">/ogin</a>
-                </h1>
+                <h3>Already have an account? <a style="font-size:25px;" href="login.html">Login</a></h3>
             </div>
         </center>
 
@@ -114,152 +112,164 @@
         <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
 
         <!-- 'p' field is to show message recieved from backend server, like success or error messages -->
-        <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+        <h4>
+            <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+        </h4>
 
         <!-- JAVASCRIPT CODE BELOW -->
         <script>
             function validateForm() {
-                var Name = document.getElementById('user_name').value;
-                var Email = document.getElementById('user_email').value;
-                var MobileNumber = document.getElementById('contact_num').value;
-                var Age = document.getElementById('user_age').value;
-                var Password = document.getElementById('user_password').value;
-                var ConfirmPassword = document.getElementById('user_confirm password').value;
-               
-                var regxName = /^[a-z A-Z]+$/;
+                let name = document.getElementById('user_name').value;
+                let email = document.getElementById('user_email').value;
+                let mobileNumber = document.getElementById('contact_num').value;
+                let age = document.getElementById('user_age').value;
+                let password = document.getElementById('user_password').value;
+                let confirmPassword = document.getElementById('user_confirm_password').value;
 
-                //validating First Name
-                if (!(regxName.test(Name))) {
-                    //after running regxName if its !(true) \...which is false...\ then show error...
+                let regxName = /^[a-z A-Z]+$/;
+                let regxEmail = /^([ a-z A-Z 0-9 \.]+)@([ a-z ]+)\.([ a-z ]+)$/;
+                let regxMobileNumber = /^[7-9][0-9]{9}$/;
+                let regxAge = /^[0-9]{1,3}$/;
+
+                if (!(regxName.test(name))) {
                     alert("Please enter valid name!");
-                    firstName.style.border = "solid 3px red";
+                    // firstName.style.border = "solid 3px red";
+                    return false
                 }
 
-                 //validating Email address like abc@xyz.com
-                 var regxEmail = /^([ a-z A-Z 0-9 ]+)@([ a-z ]+).([ a-z ]+)$/;
-                //if regxEmail test is fails then generate alert!
                 if (!(regxEmail.test(email))) {
                     alert("Please enter email id in format of abc@xyz.com");
+                    return false
                 }
-               
-                 // validating Mobile number
-                 var regxMobileNumber = /^\+91[7-9][0-9]+$/;
-                if (!(regxMobileNumber.test(MobileNumber))) {
+
+                if (!(regxMobileNumber.test(mobileNumber))) {
                     alert("Enter valid Mobile number!");
-                    MobileNumber.style.border = "solid 3px red";
+                    // mobileNumber.style.border = "solid 3px red";
+                    return false
                 }
 
-                // validating Age
-                var regxAge = /^\[0-9]+$/;
-                if (!(regxAge.test(Age))) {
+                if (!(regxAge.test(age))) {
                     alert("Enter valid Age number!");
-                    Age.style.border = "solid 3px red";
+                    // age.style.border = "solid 3px red";
+                    return false
                 }
 
-                //check if both password match with each other or not...
-                if ( password != ConfirmPassword ) {
+                if (password != confirmPassword) {
                     alert("Passwords do not match!");
                     return false;
+                } else {
+                    return true
                 }
             }
 
 
-           // <!-- JAVASCRIPT CODE BELOW -->
-            const form = document.getElementById('sign-in')
+            // <!-- JAVASCRIPT CODE BELOW -->
+            const form = document.getElementById('sign_in')
             const resendOTP = document.getElementById('resend_otp')
 
-            // If user clicks on submit button, a javascript function 'signinUser' will be called, which is defined below in this code.
             form.addEventListener('submit', signinUser)
-            // added 'resend OTP' button in HTML page.. incase user not recieved OTP bu mail.
+            
             resendOTP.addEventListener('click', resendRequest)
 
             document.getElementById('msg_from_server').innerText = ''
 
             async function signinUser(event) {
                 event.preventDefault()
-                const name = document.getElementById('user_name').value
-                const email = document.getElementById('user_email').value
-                const contact = document.getElementById('contact_num').value
-                const address = document.getElementById('user_address').value
-                const age = document.getElementById('user_age').value
-                const password = document.getElementById('user_password').value
 
-                document.getElementById('msg_from_server').innerText = 'Loading...'
+                let isValid = validateForm()
+                console.log(isValid)
+                if (isValid) {
 
-                // fetch request to backend server
-                const result = await fetch('/user/signin', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }, body: JSON.stringify({
-                        name,
-                        email,
-                        contact,
-                        address,
-                        age,
-                        password
-                    })
-                }).then(res => res.json())
+                    const name = document.getElementById('user_name').value
+                    const email = document.getElementById('user_email').value
+                    const contact = document.getElementById('contact_num').value
+                    const address = document.getElementById('user_address').value
+                    const age = document.getElementById('user_age').value
+                    const password = document.getElementById('user_password').value
+                    console.log('done and at line 184')
+                    document.getElementById('msg_from_server').innerText = 'Loading...'
 
-                // after comunicating with server, if server sends success message.. then only following code will be executed.
-                if (result.status === 'ok') {
-                    document.getElementById('otp_field').hidden = false
-                    document.getElementById('verify_otp_btn').hidden = false
+                    // fetch request to backend server
+                    const result = await fetch('/user/signin', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }, body: JSON.stringify({
+                            name,
+                            email,
+                            contact,
+                            address,
+                            age,
+                            password
+                        })
+                    }).then(res => res.json())
 
-                    document.getElementById('msg_from_server').innerText = result.message
+                    // after comunicating with server, if server sends success message.. then only following code will be executed.
+                    if (result.status === 'ok') {
+                        document.getElementById('otp_field').hidden = false
+                        document.getElementById('verify_otp_btn').hidden = false
 
-                    document.getElementById('verify_otp_btn').addEventListener('click', verify_otp)
+                        document.getElementById('msg_from_server').innerText = result.message
 
-                    async function verify_otp(event) {
-                        event.preventDefault()
-                        const otp = document.getElementById('otp_field').value
-                        const email = document.getElementById('user_email').value
+                        document.getElementById('verify_otp_btn').addEventListener('click', verify_otp)
 
-                        document.getElementById('msg_from_server').innerText = 'Verifying OTP...'
+                        async function verify_otp(event) {
+                            event.preventDefault()
+                            const otp = document.getElementById('otp_field').value
+                            const email = document.getElementById('user_email').value
 
-                        const result = await fetch('/user/verify-email', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }, body: JSON.stringify({
-                                email,
-                                otp
-                            })
-                        }).then(res => res.json())
+                            document.getElementById('msg_from_server').innerText = 'Verifying OTP...'
 
-                        if (result.status == 'ok') {
-                            localStorage.setItem('token', result.token)
-                            document.getElementById('view_user_profile_link').hidden = false
-                            document.getElementById('msg_from_server').innerText = result.message
-                        } else if (result.status === 'error') {
-                            document.getElementById('msg_from_server').innerText = result.message
-                            console.log('ERROR: ', result.message)
+                            const result = await fetch('/user/verify-email', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }, body: JSON.stringify({
+                                    email,
+                                    otp
+                                })
+                            }).then(res => res.json())
+
+                            if (result.status == 'ok') {
+                                localStorage.setItem('token', result.token)
+                                document.getElementById('view_user_profile_link').hidden = false
+                                document.getElementById('msg_from_server').innerText = result.message
+                            } else if (result.status === 'error') {
+                                document.getElementById('msg_from_server').innerText = result.message
+                                console.log('ERROR: ', result.message)
+                            }
                         }
+                        // if server sends encounter error, following code snippet will be executed
+                    } else if (result.status === 'error') {
+                        document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
+                        console.log('ERROR: ', result.message)
                     }
-                    // if server sends encounter error, following code snippet will be executed
-                } else if (result.status === 'error') {
-                    document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
-                    console.log('ERROR: ', result.message)
+                } else {
+                    console.log('not valid form')
                 }
             }
 
             // function for 'resend OTP' to user email ID
             async function resendRequest(event) {
                 event.preventDefault()
-                const email = document.getElementById('user_email').value
+                if (isValid) {
+                    const email = document.getElementById('user_email').value
 
-                document.getElementById('msg_from_server').innerText = 'Loading...'
+                    document.getElementById('msg_from_server').innerText = 'Loading...'
 
-                const result = await fetch('/user/recreate-veri-otp', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }, body: JSON.stringify({
-                        email
-                    })
-                }).then(res => res.json())
+                    const result = await fetch('/user/recreate-veri-otp', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }, body: JSON.stringify({
+                            email
+                        })
+                    }).then(res => res.json())
 
-                document.getElementById('msg_from_server').innerText = result.message
+                    document.getElementById('msg_from_server').innerText = result.message
+                } else {
+                    console.log('not valid form')
+                }
             }
         </script>
 </body>

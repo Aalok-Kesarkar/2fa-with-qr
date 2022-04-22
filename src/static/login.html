@@ -2,12 +2,12 @@
 <html lang="en">
 
 <head>
-    <title>Login </title>
+    <title>Login</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../ecommercejavascript/style.css" media="screen" type="text/css" />
+    <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -25,33 +25,28 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="pull-right">
-                <a style="color:white; font-size: 30px;" href="../ecommercejavascript/index.html">Jupiter</a>
+                <a style="color:white; font-size: 30px;" href="index.html">Jupiter</a>
             </div>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/index.html">Home</a>
+                        <a style="color:white;" class="nav-link" href="index.html">Home</a>
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/product.html">Products</a>
+                        <a style="color:white;" class="nav-link" href="product.html">Products</a>
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/cart.html">Cart</a>
+                        <a style="color:white;" class="nav-link" href="cart.html">Cart</a>
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/aboutus.html">About Us</a>
+                        <a style="color:white;" class="nav-link" href="view-user.html">Show Profile</a>
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/team.html" tabindex="-1"
-                            aria-disabled="true">Our Team</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="../login.html">login/signup</a>
+                        <a style="color:white;" class="nav-link" href="login.html">Login/Signup</a>
                     </li>
                 </ul>
             </div>
@@ -61,8 +56,7 @@
     <center>
         <section id="log_in">
             <div class="container">
-                <h1>Welcome !</h1>
-                <h1>Please Login to your account</h1>
+                <h1>Login</h1>
                 <div class="row">
                     <div class="col-md-6">
                         <form class="log_in-form">
@@ -89,196 +83,196 @@
             <input type="radio" id="qr" name="auth_method" value="qr">
             <label for="qr">QR Code</label>
             <div class="form-group">
-                <input type="submit" value="Get Code" />
+                <input type="submit" id="get_code" value="Get Code" />
             </div>
         </form>
     </center>
 
-    <form id="otp_form">
-        <!-- following fields will be 'hidden' by default, depend on selection of OTP or QR following fields will be visible -->
-        <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" hidden />
-        <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login" hidden />
+    <center>
+        <form id="otp_form">
+            <!-- following fields will be 'hidden' by default, depend on selection of OTP or QR following fields will be visible -->
+            <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" hidden />
+            <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login" hidden />
 
-        <input type="file" id="qr_field" hidden />
-        <img src="" height="200" alt="QR preview..." hidden />
-        <input type="button" name="verify_qr_btn" id="verify_qr_btn" value="Login" hidden />
+            <input type="file" id="qr_field" hidden />
+            <img src="" height="200" alt="QR preview..." hidden />
+            <input type="button" name="verify_qr_btn" id="verify_qr_btn" value="Login" hidden />
+        </form>
+    </center>
+
+    <center>
+        <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
+
+        <h4>
+            <p id="msg_from_server" style="font-family: Arial, Helvetica, sans-serif;"></p>
+        </h4>
+
+        <!-- <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" style="margin-top: 5px;" /> -->
+
+        <h3>Don't have an account? <a style="font-size:25px;" href="signup.html">Signup</a></h3>
+    </center>
 
 
-        <center>
-            <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
+    <script>
+        const form = document.getElementById('log_in')
+        const resendCode = document.getElementById('get_code')
 
-            <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+        resendCode.addEventListener('click', loginUser)
 
-            <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" style="margin-top: 5px;" />
+        function validateLogin(e) {
+            e.preventDefault()
+            let email = document.getElementById('user_email').value;
 
-            <h1>Don't have an account? <a style="font-size:25px; " href="signup.html">signup</a> </h1>
-        </center>
+            let regxEmail = /^([ a-z A-Z 0-9 \.]+)@([ a-z ]+)\.([ a-z ]+)$/;
+            if ((regxEmail.test(email))) {
+                // document.getElementById('validityMsg').style.visibility = "hidden";
+                loginUser()
+            } else {
+                alert('Please enter valid email address')
+                // document.getElementById('validityMsg').style.visibility = "visible"; //if condition satisfies this shows error text beside usernme field
+            }
+        }
+        document.getElementById('log_in').addEventListener('submit', validateLogin)
 
+        document.getElementById('msg_from_server').innerText = ''
 
-        <script>
-            function validateLogin(e) {
-                e.preventDefault()
-                var Email = document.getElementById('user_email').value;
-                var Password = document.getElementById('user_password').value;
+        // 'loginUser' function definition
+        // at first we will verify that user exists or not in our mongoDB database with these email and password.
+        async function loginUser() {
+            // event.preventDefault()
+            const email = document.getElementById('user_email').value
+            const password = document.getElementById('user_password').value
 
-                var regxEmail = /^([ a-z A-Z 0-9 ]+)@([ a-z ]+).([ a-z ]+)$/; // regx white-list
-                if (!(regxEmail.test(Email))) { // test if only white-list characters are in userName or not
-                    // document.getElementById('validityMsg').style.visibility = "visible"; //if condition satisfies this shows error text beside usernme field
-                    // console.log(false);
-                    var isValidate = false
-                } else {
-                    // document.getElementById('validityMsg').style.visibility = "hidden";
-                    // console.log(true);
-                    var isValidate = true
+            // extract authMethod (OTP or QR) from radio buttons in HTML code
+            let authMethod
+            document.getElementsByName('auth_method')
+                .forEach(radio => {
+                    if (radio.checked) {
+                        authMethod = radio.value
+                    }
+                })
+
+            document.getElementById('msg_from_server').innerText = 'Loading...'
+
+            // fetch request to backend by sending email and password entered by user.
+            const result = await fetch(`/user/login?verifMethod=${authMethod}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }, body: JSON.stringify({
+                    email,
+                    password
+                })
+            }).then(res => res.json())
+
+            if (result.status === 'ok') {
+                if (authMethod === 'otp') {
+                    document.getElementById('qr_field').hidden = true
+                    document.getElementById('verify_qr_btn').hidden = true
+
+                    document.getElementById('otp_field').hidden = false
+                    document.getElementById('verify_otp_btn').hidden = false
+
+                    verifyOTP('otp')
+
+                    document.getElementById('get_code').value = 'Resend OTP'
+                    
+                    document.getElementById('msg_from_server').innerText = result.message
+                } else if (authMethod === 'qr') {
+                    document.getElementById('otp_field').hidden = true
+                    document.getElementById('verify_otp_btn').hidden = true
+                    
+                    document.getElementById('qr_field').hidden = false
+                    document.getElementById('verify_qr_btn').hidden = false
+                    
+                    verifyQR('qr')
+
+                    document.getElementById('get_code').value = 'Resend QR'
+                    
+                    document.getElementById('msg_from_server').innerText = result.message
+                }
+            } else if (result.status === 'error') {
+                document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
+                console.log('ERROR: ', result.message)
+            }
+
+            // Function to verifying OTP
+            function verifyOTP(method) {
+
+                document.getElementById('verify_otp_btn').addEventListener('click', verify_otp)
+
+                async function verify_otp(event) {
+                    event.preventDefault()
+                    const otp = document.getElementById('otp_field').value
+                    const email = document.getElementById('user_email').value
+
+                    document.getElementById('msg_from_server').innerText = 'Verifying OTP...'
+
+                    const result = await fetch('/user/validate-login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }, body: JSON.stringify({
+                            email,
+                            otp
+                        })
+                    }).then(res => res.json())
+
+                    if (result.status == 'ok') {
+                        localStorage.setItem('token', result.token)
+                        document.getElementById('view_user_profile_link').hidden = false
+                    }
+                    document.getElementById('msg_from_server').innerText = result.message
                 }
             }
-            document.getElementById('log_in').addEventListener('submit', validateLogin)
-            if (isValidate)
-                console.log('success')
-            else
-                console.log('failed')
-            //<!-- JAVASCRIPT CODE BELOW -->
 
-            // const form = document.getElementById('log_in')
-            // const resendOTP = document.getElementById('resend_otp')
+            // Function for verifying QR code
+            function verifyQR(method) {
+                document.getElementById('verify_qr_btn').addEventListener('click', verify_qr)
 
-            // // on subimitting email and password by user, 'loginUser' function will be called.
-            // form.addEventListener('submit', loginUser)
-            // resendOTP.addEventListener('click', loginUser)
+                function verify_qr(event) {
+                    event.preventDefault()
+                    const email = document.getElementById('user_email').value
+                    const file = document.querySelector('#qr_field').files[0];
+                    // const img = document.getElementById('qr_field')
 
-            // document.getElementById('msg_from_server').innerText = ''
+                    document.getElementById('msg_from_server').innerText = 'Verifying QR...'
 
-            // // 'loginUser' function definition
-            // // at first we will verify that user exists or not in our mongoDB database with these email and password.
-            // async function loginUser(event) {
-            //     event.preventDefault()
-            //     const email = document.getElementById('user_email').value
-            //     const password = document.getElementById('user_password').value
+                    window.addEventListener('paste', e => {
+                        file.files[0] = e.clipboardData.files;
+                    });
 
-            //     // extract authMethod (OTP or QR) from radio buttons in HTML code
-            //     let authMethod
-            //     document.getElementsByName('auth_method')
-            //         .forEach(radio => {
-            //             if (radio.checked) {
-            //                 authMethod = radio.value
-            //             }
-            //         })
+                    const preview = document.querySelector('img');
+                    const reader = new FileReader();
 
-            //     document.getElementById('msg_from_server').innerText = 'Loading...'
+                    const qrBase64 = reader.addEventListener("load", async function () {
+                        // convert image file to base64 string
+                        preview.src = reader.result;
+                        let qr = preview.src
 
-            //     // fetch request to backend by sending email and password entered by user.
-            //     const result = await fetch(`/user/login?verifMethod=${authMethod}`, {
-            //         method: 'POST',
-            //         headers: {
-            //             'Content-Type': 'application/json'
-            //         }, body: JSON.stringify({
-            //             email,
-            //             password
-            //         })
-            //     }).then(res => res.json())
+                        const result = await fetch('/user/verify-qr', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }, body: JSON.stringify({
+                                email,
+                                qr
+                            })
+                        }).then(res => res.json())
 
-            //     if (result.status === 'ok') {
-            //         if (authMethod === 'otp') {
-            //             document.getElementById('qr_field').hidden = true
-            //             document.getElementById('verify_qr_btn').hidden = true
+                        if (result.status == 'ok')
+                            localStorage.setItem('token', result.token)
 
-            //             document.getElementById('otp_field').hidden = false
-            //             document.getElementById('verify_otp_btn').hidden = false
+                        document.getElementById('msg_from_server').innerText = result.message
+                    }, false);
 
-            //             document.getElementById('msg_from_server').innerText = result.message
-            //         } else if (authMethod === 'qr') {
-            //             document.getElementById('otp_field').hidden = true
-            //             document.getElementById('verify_otp_btn').hidden = true
-
-            //             document.getElementById('qr_field').hidden = false
-            //             document.getElementById('verify_qr_btn').hidden = false
-
-            //             document.getElementById('msg_from_server').innerText = result.message
-            //         }
-            //     } else if (result.status === 'error') {
-            //         document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
-            //         console.log('ERROR: ', result.message)
-            //     }
-
-            //     // Verifying with 2 factor authentication
-            //     // If OTP is expected...
-            //     if (document.getElementById('verify_otp_btn').hidden === false) {
-
-            //         document.getElementById('verify_otp_btn').addEventListener('click', verify_otp)
-
-            //         async function verify_otp(event) {
-            //             event.preventDefault()
-            //             const otp = document.getElementById('otp_field').value
-            //             const email = document.getElementById('user_email').value
-
-            //             document.getElementById('msg_from_server').innerText = 'Verifying OTP...'
-
-            //             const result = await fetch('/user/validate-login', {
-            //                 method: 'POST',
-            //                 headers: {
-            //                     'Content-Type': 'application/json'
-            //                 }, body: JSON.stringify({
-            //                     email,
-            //                     otp
-            //                 })
-            //             }).then(res => res.json())
-
-            //             if (result.status == 'ok') {
-            //                 localStorage.setItem('token', result.token)
-            //                 document.getElementById('view_user_profile_link').hidden = false
-            //             }
-            //             document.getElementById('msg_from_server').innerText = result.message
-            //         }
-
-            //         // IF QR code is expected...
-            //     } else if (document.getElementById('verify_qr_btn').hidden === false) {
-            //         document.getElementById('verify_qr_btn').addEventListener('click', verify_qr)
-
-            //         function verify_qr(event) {
-            //             event.preventDefault()
-            //             const email = document.getElementById('user_email').value
-            //             const file = document.querySelector('#qr_field').files[0];
-            //             // const img = document.getElementById('qr_field')
-
-            //             document.getElementById('msg_from_server').innerText = 'Verifying QR...'
-
-            //             window.addEventListener('paste', e => {
-            //                 file.files[0] = e.clipboardData.files;
-            //             });
-
-            //             const preview = document.querySelector('img');
-            //             const reader = new FileReader();
-
-            //             const qrBase64 = reader.addEventListener("load", async function () {
-            //                 // convert image file to base64 string
-            //                 preview.src = reader.result;
-            //                 let qr = preview.src
-
-            //                 const result = await fetch('/user/verify-qr', {
-            //                     method: 'POST',
-            //                     headers: {
-            //                         'Content-Type': 'application/json'
-            //                     }, body: JSON.stringify({
-            //                         email,
-            //                         qr
-            //                     })
-            //                 }).then(res => res.json())
-
-            //                 if (result.status == 'ok')
-            //                     localStorage.setItem('token', result.token)
-
-            //                 document.getElementById('msg_from_server').innerText = result.message
-            //             }, false);
-
-            //             if (file) {
-            //                 reader.readAsDataURL(file);
-            //             }
-            //         }
-            //     } else {
-            //         console.log('Error thrown')
-            //     }
-            // }
-        </script>
+                    if (file) {
+                        reader.readAsDataURL(file);
+                    }
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>
