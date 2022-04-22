@@ -31,7 +31,7 @@ router.post('/user/signin', async (req, res) => {
 
         res.send({ Phase: `DEVELOPEMENT PHASE`, status: 'ok', message: `Check inbox of ${user.email} for email verification OTP!` })
     } catch (err) {
-        err.code === 11000 ? res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Can't use this email address` }) : res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: ` ${err}` })
+        err.code === 11000 ? res.status(400).json({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: `Can't use this email address or mobile number` }) : res.status(400).send({ Phase: `DEVELOPEMENT PHASE`, status: 'error', message: ` ${err}` })
     }
 })
 

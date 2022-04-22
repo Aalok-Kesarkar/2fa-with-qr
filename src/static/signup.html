@@ -88,7 +88,6 @@
                     <input type="password" name="user_confirm_password" id="user_confirm_password"
                         placeholder="Confirm Password" required />
                 </div>
-                <!-- <input type="submit" onclick="validateForm()" value="Submit" /> -->
                 <input type="submit" value="Submit" />
             </form><br>
 
@@ -101,6 +100,10 @@
                 <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login" hidden>
 
             </form><br>
+            <!-- 'p' field is to show message recieved from backend server, like success or error messages -->
+            <h4>
+                <p id="msg_from_server" style="font-family: Arial, Helvetica, sans-serif;"></p>
+            </h4>
 
             <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" />
             <div>
@@ -111,10 +114,6 @@
         <!-- if user enters OTP then only following link will bw appear on page -->
         <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
 
-        <!-- 'p' field is to show message recieved from backend server, like success or error messages -->
-        <h4>
-            <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
-        </h4>
 
         <!-- JAVASCRIPT CODE BELOW -->
         <script>
@@ -154,6 +153,11 @@
                     return false
                 }
 
+                if (password.length < 6) {
+                    alert("Password should be greater than 6 characters")
+                    return false
+                }
+
                 if (password != confirmPassword) {
                     alert("Passwords do not match!");
                     return false;
@@ -177,7 +181,6 @@
                 event.preventDefault()
 
                 let isValid = validateForm()
-                console.log(isValid)
                 if (isValid) {
 
                     const name = document.getElementById('user_name').value
@@ -186,7 +189,6 @@
                     const address = document.getElementById('user_address').value
                     const age = document.getElementById('user_age').value
                     const password = document.getElementById('user_password').value
-                    console.log('done and at line 184')
                     document.getElementById('msg_from_server').innerText = 'Loading...'
 
                     // fetch request to backend server
