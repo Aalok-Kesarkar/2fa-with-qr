@@ -23,7 +23,9 @@ router.post('/user/signin', async (req, res) => {
         await user.save()
 
         const emailSubject = `OTP for email verification`
-        const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for verifying email is: <h2>${OTP}</h2><br>One Time Password is valid for 3 minutes only`
+        const htmlText = `<h3>Dear ${user.name},</h3><br>
+        Greetings from Snap Buy Online Shopping!<br>
+        OTP for verifying email is: <h2>${OTP}</h2><br>One Time Password is valid for 3 minutes only`
 
         await emailSender.regularEmail(user.email, emailSubject, htmlText)
 

@@ -14,7 +14,7 @@ const mailTransporter = nodemailer.createTransport({
 const regularEmail = (userEmail, emailSubject, htmlText) => {
     return new Promise((resolve, reject) => {
         mailTransporter.sendMail({
-            from: "E-Auth System <aalok.temp@outlook.com>",
+            from: "Snap Buy Online Shopping <aalok.temp@outlook.com>",
             to: userEmail,
             subject: emailSubject,
             html: htmlText
@@ -26,11 +26,11 @@ const regularEmail = (userEmail, emailSubject, htmlText) => {
 const verifyLoginByQR = (userEmail, userName, imgBin) => {
     return new Promise((resolve, reject) => {
         mailTransporter.sendMail({
-            from: "E-Auth System <aalok.temp@outlook.com>",
+            from: "Snap Buy Online Shopping <aalok.temp@outlook.com>",
             to: userEmail,
             subject: "QR for logging in ot app",
             attachDataUrls: true,
-            html: `<h2>Dear ${userName},</h2><br>One Time QR for logging in to app. Please copy and paste into browser to get authenticated.<br><img src=${imgBin}><br>Valid for 3 minutes only`,
+            html: `<h2>Dear ${userName},</h2><br>One Time QR for logging in to Snap Buy account. Please copy and paste into browser to get authenticated.<br><img src=${imgBin}><br>Valid for 3 minutes only`,
             attachments: [{
                 filename: 'QR.png',
                 path: imgBin
