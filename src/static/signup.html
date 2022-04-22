@@ -2,141 +2,266 @@
 <html lang="en">
 
 <head>
+    <title>Sign In</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In</title>
+
+    <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.store.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
 
+
 <body>
-    <h1>Signin page</h1>
-    <form id="sign-in">
-        <!-- Form for basic info of user -->
-        <input type="text" name="user_name" id="user_name" placeholder="Name" required />
-        <input type="text" name="user_email" id="user_email" placeholder="Email" required />
-        <input type="number" name="contact_num" id="contact_num" placeholder="Mobile No." />
-        <input type="text" name="user_address" id="user_address" placeholder="Address" />
-        <input type="number" name="user_age" id="user_age" placeholder="Age" />
-        <input type="password" name="user_password" id="user_password" placeholder="Password" required />
+    <section id="nav-bar">
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: green;">
 
-        <input type="submit" value="Submit" />
-    </form><br>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="pull-right">
+              <a style="color:white; font-size: 30px;"
+                 href="../ecommercejavascript/index.html">Ecommerce
+                 Website</a>
 
-    <form id="otp_form">
-        <!-- following 2 fields will be hidden by default,
+
+            </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/product.html">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/cart.html">Cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/aboutus.html">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a style="color:white;" class="nav-link" href="../ecommercejavascript/team.html" tabindex="-1" aria-disabled="true">Our
+                            Team</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </section>
+
+
+    <section id="Signin">
+        <center>
+            <div class="container">
+            <h1>Create new account</h1>
+            <div class="row">
+            <div class="col-md-6">
+            <form class="contact-form">
+            <div class="form-group">
+        </center>
+
+        <center>
+            <form id="sign-in">
+                <!-- Form for basic info of user -->
+                <div class="form-group">
+                    <input type="text" name="user_name" id="user_name" placeholder="Name"  />
+                </div>
+                <div class="form-group">
+                    <input type="text" name="user_email" id="user_email" placeholder="Email"  />
+                </div>
+                <div class="form-group">
+                    <input type="text" name="contact_num" id="contact_num" placeholder="Mobile No." />
+                </div>
+                <div class="form-group">
+                    <input type="text" name="user_address" id="user_address" placeholder="Address" />
+                </div>
+                <div class="form-group">
+                    <input type="number" name="user_age" id="user_age" placeholder="Age" />
+                </div>
+                <div class="form-group">
+                    <input type="password" name="user_password" id="user_password" placeholder="Password" required />
+                </div>
+                <div class="form-group">
+                    <input type="Confirm password" name="user_Confirm password" id="user_Confirm password" placeholder="Confirm Password" required />
+                </div>
+                <input type="submit" onclick="validateForm()" value="Submit" />
+            </form><br>
+
+
+
+            <form id="otp_form">
+                <!-- following 2 fields will be hidden by default,
             If email with OTP sent to user mail ID successfully, then only these field will be visible on page -->
-        <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" hidden />
-        <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login" hidden>
+                <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" hidden />
+                <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login" hidden>
 
-    </form><br>
+            </form><br>
 
-    <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" />
+            <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" />
+            <div>
+                <h1>Already have an account? <a style="font-size:25px; "
+                    href="../static\login.html">/ogin</a>
+                </h1>
+            </div>
+        </center>
 
-    <!-- if user enters OTP then only following link will bw appear on page -->
-    <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
+        <!-- if user enters OTP then only following link will bw appear on page -->
+        <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
 
-    <!-- 'p' field is to show message recieved from backend server, like success or error messages -->
-    <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
+        <!-- 'p' field is to show message recieved from backend server, like success or error messages -->
+        <p id="msg_from_server" style="font-family: Georgia, 'Times New Roman', Times, serif;"></p>
 
-    <!-- JAVASCRIPT CODE BELOW -->
-    <script>
-        const form = document.getElementById('sign-in')
-        const resendOTP = document.getElementById('resend_otp')
+        <!-- JAVASCRIPT CODE BELOW -->
+        <script>
+            function validateForm() {
+                var Name = document.getElementById('user_name').value;
+                var Email = document.getElementById('user_email').value;
+                var MobileNumber = document.getElementById('contact_num').value;
+                var Age = document.getElementById('user_age').value;
+                var Password = document.getElementById('user_password').value;
+                var ConfirmPassword = document.getElementById('user_confirm password').value;
+               
+                var regxName = /^[a-z A-Z]+$/;
 
-        // If user clicks on submit button, a javascript function 'signinUser' will be called, which is defined below in this code.
-        form.addEventListener('submit', signinUser)
-        // added 'resend OTP' button in HTML page.. incase user not recieved OTP bu mail.
-        resendOTP.addEventListener('click', resendRequest)
+                //validating First Name
+                if (!(regxName.test(Name))) {
+                    //after running regxName if its !(true) \...which is false...\ then show error...
+                    alert("Please enter valid name!");
+                    firstName.style.border = "solid 3px red";
+                }
 
-        document.getElementById('msg_from_server').innerText = ''
+                 //validating Email address like abc@xyz.com
+                 var regxEmail = /^([ a-z A-Z 0-9 ]+)@([ a-z ]+).([ a-z ]+)$/;
+                //if regxEmail test is fails then generate alert!
+                if (!(regxEmail.test(email))) {
+                    alert("Please enter email id in format of abc@xyz.com");
+                }
+               
+                 // validating Mobile number
+                 var regxMobileNumber = /^\+91[7-9][0-9]+$/;
+                if (!(regxMobileNumber.test(MobileNumber))) {
+                    alert("Enter valid Mobile number!");
+                    MobileNumber.style.border = "solid 3px red";
+                }
 
-        async function signinUser(event) {
-            event.preventDefault()
-            const name = document.getElementById('user_name').value
-            const email = document.getElementById('user_email').value
-            const contact = document.getElementById('contact_num').value
-            const address = document.getElementById('user_address').value
-            const age = document.getElementById('user_age').value
-            const password = document.getElementById('user_password').value
+                // validating Age
+                var regxAge = /^\[0-9]+$/;
+                if (!(regxAge.test(Age))) {
+                    alert("Enter valid Age number!");
+                    Age.style.border = "solid 3px red";
+                }
 
-            document.getElementById('msg_from_server').innerText = 'Loading...'
+                //check if both password match with each other or not...
+                if ( password != ConfirmPassword ) {
+                    alert("Passwords do not match!");
+                    return false;
+                }
+            }
 
-            // fetch request to backend server
-            const result = await fetch('/user/signin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }, body: JSON.stringify({
-                    name,
-                    email,
-                    contact,
-                    address,
-                    age,
-                    password
-                })
-            }).then(res => res.json())
 
-            // after comunicating with server, if server sends success message.. then only following code will be executed.
-            if (result.status === 'ok') {
-                document.getElementById('otp_field').hidden = false
-                document.getElementById('verify_otp_btn').hidden = false
+           // <!-- JAVASCRIPT CODE BELOW -->
+            const form = document.getElementById('sign-in')
+            const resendOTP = document.getElementById('resend_otp')
+
+            // If user clicks on submit button, a javascript function 'signinUser' will be called, which is defined below in this code.
+            form.addEventListener('submit', signinUser)
+            // added 'resend OTP' button in HTML page.. incase user not recieved OTP bu mail.
+            resendOTP.addEventListener('click', resendRequest)
+
+            document.getElementById('msg_from_server').innerText = ''
+
+            async function signinUser(event) {
+                event.preventDefault()
+                const name = document.getElementById('user_name').value
+                const email = document.getElementById('user_email').value
+                const contact = document.getElementById('contact_num').value
+                const address = document.getElementById('user_address').value
+                const age = document.getElementById('user_age').value
+                const password = document.getElementById('user_password').value
+
+                document.getElementById('msg_from_server').innerText = 'Loading...'
+
+                // fetch request to backend server
+                const result = await fetch('/user/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }, body: JSON.stringify({
+                        name,
+                        email,
+                        contact,
+                        address,
+                        age,
+                        password
+                    })
+                }).then(res => res.json())
+
+                // after comunicating with server, if server sends success message.. then only following code will be executed.
+                if (result.status === 'ok') {
+                    document.getElementById('otp_field').hidden = false
+                    document.getElementById('verify_otp_btn').hidden = false
+
+                    document.getElementById('msg_from_server').innerText = result.message
+
+                    document.getElementById('verify_otp_btn').addEventListener('click', verify_otp)
+
+                    async function verify_otp(event) {
+                        event.preventDefault()
+                        const otp = document.getElementById('otp_field').value
+                        const email = document.getElementById('user_email').value
+
+                        document.getElementById('msg_from_server').innerText = 'Verifying OTP...'
+
+                        const result = await fetch('/user/verify-email', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }, body: JSON.stringify({
+                                email,
+                                otp
+                            })
+                        }).then(res => res.json())
+
+                        if (result.status == 'ok') {
+                            localStorage.setItem('token', result.token)
+                            document.getElementById('view_user_profile_link').hidden = false
+                            document.getElementById('msg_from_server').innerText = result.message
+                        } else if (result.status === 'error') {
+                            document.getElementById('msg_from_server').innerText = result.message
+                            console.log('ERROR: ', result.message)
+                        }
+                    }
+                    // if server sends encounter error, following code snippet will be executed
+                } else if (result.status === 'error') {
+                    document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
+                    console.log('ERROR: ', result.message)
+                }
+            }
+
+            // function for 'resend OTP' to user email ID
+            async function resendRequest(event) {
+                event.preventDefault()
+                const email = document.getElementById('user_email').value
+
+                document.getElementById('msg_from_server').innerText = 'Loading...'
+
+                const result = await fetch('/user/recreate-veri-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }, body: JSON.stringify({
+                        email
+                    })
+                }).then(res => res.json())
 
                 document.getElementById('msg_from_server').innerText = result.message
-
-                document.getElementById('verify_otp_btn').addEventListener('click', verify_otp)
-
-                async function verify_otp(event) {
-                    event.preventDefault()
-                    const otp = document.getElementById('otp_field').value
-                    const email = document.getElementById('user_email').value
-
-                    document.getElementById('msg_from_server').innerText = 'Verifying OTP...'
-
-                    const result = await fetch('/user/verify-email', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }, body: JSON.stringify({
-                            email,
-                            otp
-                        })
-                    }).then(res => res.json())
-
-                    if (result.status == 'ok') {
-                        localStorage.setItem('token', result.token)
-                        document.getElementById('view_user_profile_link').hidden = false
-                        document.getElementById('msg_from_server').innerText = result.message
-                    } else if (result.status === 'error') {
-                        document.getElementById('msg_from_server').innerText = result.message
-                        console.log('ERROR: ', result.message)
-                    }
-                }
-                // if server sends encounter error, following code snippet will be executed
-            } else if (result.status === 'error') {
-                document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
-                console.log('ERROR: ', result.message)
             }
-        }
-
-        // function for 'resend OTP' to user email ID
-        async function resendRequest(event) {
-            event.preventDefault()
-            const email = document.getElementById('user_email').value
-
-            document.getElementById('msg_from_server').innerText = 'Loading...'
-
-            const result = await fetch('/user/recreate-veri-otp', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }, body: JSON.stringify({
-                    email
-                })
-            }).then(res => res.json())
-
-            document.getElementById('msg_from_server').innerText = result.message
-        }
-    </script>
+        </script>
 </body>
 
 </html>
