@@ -2,18 +2,14 @@ const express = require('express')
 const path = require('path')
 require('./db/mongoose')
 
-const PORT = process.env.AUTH_PROJECT_PORT
+const PORT = process.env.AUTH_PROJECT_PORT || 3000
 const app = express()
-// const viewsPath = path.join(__dirname, '../templates/views')
 
 app.use(express.json())
 express.urlencoded({ extended: false })
 
 app.use('/', express.static(path.join(__dirname, '/static')))
 const userRouter = require('./routers/user.router')
-
-// app.set('view engine', 'hbs')
-// app.set('views', viewsPath)
 
 app.use(userRouter)
 
