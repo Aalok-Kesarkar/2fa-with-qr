@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
+    <link rel="stylesheet" href="Style1.Css" media="screen" type="text/css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -42,11 +43,16 @@
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="view-user.html">Show Profile</a>
+                        <a style="color:white;" class="nav-link" href="aboutus.html">About Us</a>
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="login.html">Login/Signup</a>
+                        <a style="color:white;" id="profile_button" class="nav-link" href="view-user.html"
+                            hidden>Profile</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a style="color:white;" id="login_button" class="nav-link" href="login.html">Login/Signup</a>
                     </li>
                 </ul>
             </div>
@@ -83,7 +89,7 @@
             <input type="radio" id="qr" name="auth_method" value="qr">
             <label for="qr">QR Code</label>
             <div class="form-group">
-                <input type="submit" id="get_code" value="Get Code" />
+                <input class="ptn ptn1" type="submit" id="get_code" value="Get Code" />
             </div>
         </form>
     </center>
@@ -96,13 +102,11 @@
 
             <input type="file" id="qr_field" hidden />
             <img src="" height="200" alt="QR preview..." hidden />
-            <input type="button" name="verify_qr_btn" id="verify_qr_btn" value="Login" hidden />
+            <input type="button" class="ptn ptn1" name="verify_qr_btn" id="verify_qr_btn" value="Login" hidden />
         </form>
     </center>
 
     <center>
-        <a href="view-user.html" id="view_user_profile_link" hidden>View my profile</a>
-
         <h4>
             <p id="msg_from_server" style="font-family: Arial, Helvetica, sans-serif;"></p>
         </h4>
@@ -175,19 +179,19 @@
                     verifyOTP('otp')
 
                     document.getElementById('get_code').value = 'Resend OTP'
-                    
+
                     document.getElementById('msg_from_server').innerText = result.message
                 } else if (authMethod === 'qr') {
                     document.getElementById('otp_field').hidden = true
                     document.getElementById('verify_otp_btn').hidden = true
-                    
+
                     document.getElementById('qr_field').hidden = false
                     document.getElementById('verify_qr_btn').hidden = false
-                    
+
                     verifyQR('qr')
 
                     document.getElementById('get_code').value = 'Resend QR'
-                    
+
                     document.getElementById('msg_from_server').innerText = result.message
                 }
             } else if (result.status === 'error') {
@@ -219,7 +223,9 @@
 
                     if (result.status == 'ok') {
                         localStorage.setItem('token', result.token)
-                        document.getElementById('view_user_profile_link').hidden = false
+
+                        document.getElementById('login_button').hidden = true
+                        document.getElementById('profile_button').hidden = false
                     }
                     document.getElementById('msg_from_server').innerText = result.message
                 }
@@ -259,9 +265,12 @@
                             })
                         }).then(res => res.json())
 
-                        if (result.status == 'ok')
+                        if (result.status == 'ok') {
                             localStorage.setItem('token', result.token)
 
+                            document.getElementById('login_button').hidden = true
+                            document.getElementById('profile_button').hidden = false
+                        }
                         document.getElementById('msg_from_server').innerText = result.message
                     }, false);
 

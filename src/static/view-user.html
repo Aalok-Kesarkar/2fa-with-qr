@@ -17,6 +17,7 @@
 <body>
     <section id="nav-bar">
         <nav class="navbar navbar-expand-lg navbar-light" style="background-color: green;">
+
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -25,11 +26,11 @@
                 <a style="color:white; font-size: 30px;" href="index.html">Snap Buy</a>
             </div>
             <div class="collapse navbar-collapse" id="navbarNav">
+
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
                         <a style="color:white;" class="nav-link" href="index.html">Home</a>
                     </li>
-
                     <li class="nav-item">
                         <a style="color:white;" class="nav-link" href="product.html">Products</a>
                     </li>
@@ -39,15 +40,21 @@
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="view-user.html">Show Profile</a>
+                        <a style="color:white;" class="nav-link" href="aboutus.html">About Us</a>
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="login.html">Login/Signup</a>
+                        <a style="color:white;" id="profile_button" class="nav-link" href="view-user.html"
+                            hidden>Profile</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a style="color:white;" id="login_button" class="nav-link" href="login.html">Login/Signup</a>
                     </li>
                 </ul>
             </div>
         </nav>
+
     </section>
     <h1>User Profile</h1>
     <center>
@@ -66,6 +73,11 @@
     <script>
         document.getElementById('show_profile_btn').addEventListener('click', showProfile)
         document.getElementById('logout_btn').addEventListener('click', logout)
+
+        if (window.localStorage.getItem('token')) {
+            document.getElementById('login_button').hidden = true
+            document.getElementById('profile_button').hidden = false
+        }
 
         async function showProfile(event) {
             event.preventDefault()
@@ -120,6 +132,9 @@
                         = ''
 
                     localStorage.removeItem('token')
+                    
+                    document.getElementById('login_button').hidden = false
+                    document.getElementById('profile_button').hidden = true
                 } else if (result.status === 'error') {
                     document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
                     console.log('ERROR: ', result.message)

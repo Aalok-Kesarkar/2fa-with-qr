@@ -33,9 +33,9 @@
 				<li class="nav-item">
 					<a style="color:white;" class="nav-link" href="product.html">Products</a>
 				</li>
+
 				<li class="nav-item">
 					<a style="color:white;" class="nav-link" href="cart.html">Cart</a>
-
 				</li>
 
 				<li class="nav-item">
@@ -43,12 +43,18 @@
 				</li>
 
 				<li class="nav-item">
-					<a style="color:white;" class="nav-link"
-						href="login.html">Login/Signup</a>
+					<a style="color:white;" id="profile_button" class="nav-link" href="view-user.html"
+						hidden>Profile</a>
 				</li>
+
+				<li class="nav-item">
+					<a style="color:white;" id="login_button" class="nav-link" href="login.html">Login/Signup</a>
+				</li>
+
 			</ul>
 		</div>
 	</nav>
+
 </section>
 
 
@@ -767,12 +773,15 @@
 
 			</div>
 
-
-
-
-
-
 		</div>
 	</div>
 
 </section>
+<script>
+	if (window.localStorage.getItem('token')) {
+		document.getElementById('login_button').hidden = true
+		document.getElementById('profile_button').hidden = false
+	}
+</script>
+
+</html>
