@@ -635,14 +635,14 @@ h1::after
 
 /*-------login Page---------*/
 
-#form
+/* #form
 {
 	background: #efefef;
 	padding-top: 40px;
 	padding-bottom: 40px;
 	color: #777;
 
-}
+} */
 
 .log_in-form
 {

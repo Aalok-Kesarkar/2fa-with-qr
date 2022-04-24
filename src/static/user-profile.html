@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
-    <link rel="stylesheet" href="style1.css" >
+    <link rel="stylesheet" href="style1.css" media="screen" type="text/css" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -43,10 +43,11 @@
                     <li class="nav-item">
                         <a style="color:white;" class="nav-link" href="team.html">Our Team</a>
                     </li>
-                    
+
                     </li>
                     <li id="nav-item"><button id="logout-btn"
-                            style="all: unset; cursor: pointer; color:white; font-size: 20px; padding-top: 6.5px;" hidden>Logout</button>
+                            style="all: unset; cursor: pointer; color:white; font-size: 20px; padding-top: 6.5px;"
+                            hidden>Logout</button>
                     </li>
 
                     <li class="nav-item">
@@ -57,17 +58,21 @@
         </nav>
 
     </section>
+
     <h1>User Profile</h1>
     <center>
         <div id="show-profile">
             <input class="ptn ptn1" type="button" id="show-profile-btn" value="View Profile">
             <!-- <input type="button" id="logout-btn" value="Logout"> -->
-            <h3><p id="message-from-server"></p>
-            <p id="user-name"></p>
-            <p id="user-email"></p>
-            <p id="user-contact"></p>
-            <p id="user-age"></p>
-            <p id="user-address"></p>
+            <h3>
+                <p id="message-from-server"></p>
+                <div id="container">
+                    <p id="user-name"></p>
+                    <p id="user-email"></p>
+                    <p id="user-contact"></p>
+                    <p id="user-age"></p>
+                    <p id="user-address"></p>
+                </div>
             </h3>
         </div>
     </center>

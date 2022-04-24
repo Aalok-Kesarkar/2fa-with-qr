@@ -1,27 +1,40 @@
-
-#h1{
+#h1 {
   font-size: 15px;
 }
-#nav-bar
-{
-	position:sticky;
-	top: 0;
-	z-index: 10;
-	
-	
+
+#nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+
+}
+
+.form-field {
+  font-size: 14px;
+  position: relative;
+
+  border: none;
+  -webkit-appearance: none;
+  -ms-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: #f2f2f2;
+  padding: 12px;
+  border-radius: 3px;
+  width: 250px;
+  font-size: 14px;
 }
 
 /* Add a black background color to the top navigation bar */
-.topnav 
-{
-  	overflow: hidden;
-	
- 	
+.topnav {
+  overflow: hidden;
+
+
 }
 
 /* Style the links inside the navigation bar */
-.topnav a 
-{
+.topnav a {
   float: left;
   display: block;
   color: black;
@@ -29,7 +42,7 @@
   padding: 26px 16px;
   text-decoration: none;
   font-size: 17px;
-  
+
 }
 
 /* Change the color of links on hover */
@@ -41,95 +54,91 @@
 /* Style the "active" element to highlight the current page */
 .topnav a.active {
   background-color: #00CDCD;
-  
+
 }
 
-.navbarNav ul .li
-{
-	color: white;
-	background-color: black;
+.navbarNav ul .li {
+  color: white;
+  background-color: black;
 }
 
-.topnav a 
-{
-  	background-color: white;
-	font-size: 20px;
-  
-}
-.navbar-brand img
-{
-	height:100px;
-	padding-left:0;
-	
+.topnav a {
+  background-color: white;
+  font-size: 20px;
+
 }
 
-.navbar-nav li
-{
-	padding: 0 10px;
+.navbar-brand img {
+  height: 100px;
+  padding-left: 0;
+
 }
 
-.navbar-nav li a
-{
-	float: right;
-	text-align: left;
-	font-size: 20px;
-  	
-	
+.navbar-nav li {
+  padding: 0 10px;
+}
+
+.navbar-nav li a {
+  float: right;
+  text-align: left;
+  font-size: 20px;
+
+
 }
 
 
-#nav-bar ul li a:hover
-{
-	color:#007bff!important;
+#nav-bar ul li a:hover {
+  color: #007bff !important;
 }
 
-.navbar
-{
-	background-color: #00CDCD;
-	margin-bottom: 20px;
-	
+.navbar {
+  background-color: #00CDCD;
+  margin-bottom: 20px;
+
 }
 
-.navbar-toggler
-{
-	border: none;
-	
+.navbar-toggler {
+  border: none;
+
 }
 
-.navbar-link
-{
-	color:#555!important;
-	font-weight:600;
-	font-size:16px;
+.navbar-link {
+  color: #555 !important;
+  font-weight: 600;
+  font-size: 16px;
 }
 
-.nav-item{
+.nav-item {
   font-size: 20px;
 }
-.form-group{
+
+.form-group {
   margin-top: 2px;
 }
-  .ptn {
-    background-color: #0ea513; /* Green */
-    border: none;
-    color: white;
-    padding: 9px 18px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 15px;
-    margin: 1px 1px;
-    transition-duration: 0.4s;
-    cursor: pointer;
-  }
-  
-  .ptn {
-    background-color: white; 
-    color: black; 
-    border: 1.5px solid #4CAF50;
-  }
-  
-  .ptn1:hover {
-    background-color: #4CAF50;
-    color: white;
-  }
+
+.ptn {
+  background-color: #0ea513;
+  /* Green */
+  border: none;
+  color: white;
+  padding: 9px 18px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  margin: 1px 1px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.ptn {
+  background-color: white;
+  color: black;
+  border: 1.5px solid #4CAF50;
+  border-radius: 4px;
+}
+
+.ptn1:hover {
+  background-color: #4CAF50;
+  color: white;
+}
