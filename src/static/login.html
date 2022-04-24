@@ -43,16 +43,16 @@
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="aboutus.html">About Us</a>
+                        <a style="color:white;" class="nav-link" href="team.html">Our Team</a>
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" id="profile_button" class="nav-link" href="view-user.html"
+                        <a style="color:white;" id="profile-btn" class="nav-link" href="user-profile.html"
                             hidden>Profile</a>
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" id="login_button" class="nav-link" href="login.html">Login/Signup</a>
+                        <a style="color:white;" id="signup-btn" class="nav-link" href="signup.html">Signup</a>
                     </li>
                 </ul>
             </div>
@@ -60,102 +60,100 @@
     </section>
 
     <center>
-        <section id="log_in">
+        <section id="log-in">
             <div class="container">
                 <h1>Login</h1>
                 <div class="row">
                     <div class="col-md-6">
-                        <form class="log_in-form">
+                        <form class="log-in-form">
                             <div class="form-group">
     </center>
 
-
     <center>
-        <form id="log_in">
+        <form id="log-in">
             <!-- We will expect email and correct password from user for logging in -->
             <div class="form-group">
-                <input type="text" name="user_email" id="user_email" placeholder="Email" required />
+                <input type="text" name="user-email" id="user-email" placeholder="Email" required />
             </div>
             <div class="form-group">
-                <input type="password" name="user_password" id="user_password" placeholder="Password" required />
+                <input type="password" name="user-password" id="user-password" placeholder="Password" required />
             </div>
-            <!-- </center>   -->
 
             <!-- User need to choose any one authentication method (OTP or QR) for 2 step authentication -->
-            <!-- <center>   -->
-            <input type="radio" id="otp" name="auth_method" value="otp" required>
+            <input type="radio" id="otp" name="auth-method" value="otp" required>
             <label for="otp">OTP</label>
 
-            <input type="radio" id="qr" name="auth_method" value="qr">
+            <input type="radio" id="qr" name="auth-method" value="qr">
             <label for="qr">QR Code</label>
             <div class="form-group">
-                <input class="ptn ptn1" type="submit" id="get_code" value="Get Code" />
+                <input class="ptn ptn1" type="submit" id="get-code" value="Get Code" />
             </div>
         </form>
     </center>
 
     <center>
-        <form id="otp_form">
+        <form id="otp-form">
             <!-- following fields will be 'hidden' by default, depend on selection of OTP or QR following fields will be visible -->
-            <input type="text" name="otp_field" id="otp_field" placeholder="One Time Password" hidden />
-            <input type="button" name="verify_otp_btn" id="verify_otp_btn" value="Login" hidden />
+            <input type="text" name="otp-field" id="otp-field" placeholder="One Time Password" hidden />
+            <input type="button" name="verify-otp-btn" id="verify-otp-btn" value="Login" hidden />
 
-            <input type="file" id="qr_field" hidden />
+            <input type="file" id="qr-field" hidden />
             <img src="" height="200" alt="QR preview..." hidden />
-            <input type="button" class="ptn ptn1" name="verify_qr_btn" id="verify_qr_btn" value="Login" hidden />
+            <input type="button" class="ptn ptn1" name="verify-qr-btn" id="verify-qr-btn" value="Login" hidden />
         </form>
     </center>
 
     <center>
         <h4>
-            <p id="msg_from_server" style="font-family: Arial, Helvetica, sans-serif;"></p>
+            <p id="msg-from-server" style="font-family: Arial, Helvetica, sans-serif;"></p>
         </h4>
 
-        <!-- <input type="button" name="resend_otp" id="resend_otp" value="Resend OTP" style="margin-top: 5px;" /> -->
+        <!-- <input type="button" name="resend-otp" id="resend-otp" value="Resend OTP" style="margin-top: 5px;" /> -->
 
         <h3>Don't have an account? <a style="font-size:25px;" href="signup.html">Signup</a></h3>
     </center>
 
 
     <script>
-        const form = document.getElementById('log_in')
-        const resendCode = document.getElementById('get_code')
+        const form = document.getElementById('log-in')
 
+        const resendCode = document.getElementById('get-code')
         resendCode.addEventListener('click', loginUser)
+
+        document.getElementById('log-in').addEventListener('submit', validateLogin)
+
+        if (window.localStorage.getItem('token')) {
+            document.getElementById('signup-btn').hidden = true
+            document.getElementById('profile-btn').hidden = false
+        }
 
         function validateLogin(e) {
             e.preventDefault()
-            let email = document.getElementById('user_email').value;
+            let email = document.getElementById('user-email').value;
 
             let regxEmail = /^([ a-z A-Z 0-9 \.]+)@([ a-z ]+)\.([ a-z ]+)$/;
-            if ((regxEmail.test(email))) {
-                // document.getElementById('validityMsg').style.visibility = "hidden";
-                loginUser()
-            } else {
-                alert('Please enter valid email address')
-                // document.getElementById('validityMsg').style.visibility = "visible"; //if condition satisfies this shows error text beside usernme field
-            }
-        }
-        document.getElementById('log_in').addEventListener('submit', validateLogin)
 
-        document.getElementById('msg_from_server').innerText = ''
+            (regxEmail.test(email)) ? loginUser() : alert('Please enter valid email address')
+        }
+
+        document.getElementById('msg-from-server').innerText = ''
 
         // 'loginUser' function definition
         // at first we will verify that user exists or not in our mongoDB database with these email and password.
         async function loginUser() {
-            const email = document.getElementById('user_email').value
-            const password = document.getElementById('user_password').value
+            const email = document.getElementById('user-email').value
+            const password = document.getElementById('user-password').value
 
             // extract authMethod (OTP or QR) from radio buttons in HTML code
             let authMethod
-            document.getElementsByName('auth_method')
+            document.getElementsByName('auth-method')
                 .forEach(radio => {
                     if (radio.checked) {
                         authMethod = radio.value
                     }
                 })
 
-            document.getElementById('msg_from_server').innerText = 'Loading...'
+            document.getElementById('msg-from-server').innerText = 'Loading...'
 
             // fetch request to backend by sending email and password entered by user.
             const result = await fetch(`/user/login?verifMethod=${authMethod}`, {
@@ -170,46 +168,44 @@
 
             if (result.status === 'ok') {
                 if (authMethod === 'otp') {
-                    document.getElementById('qr_field').hidden = true
-                    document.getElementById('verify_qr_btn').hidden = true
+                    document.getElementById('qr-field').hidden = true
+                    document.getElementById('verify-qr-btn').hidden = true
 
-                    document.getElementById('otp_field').hidden = false
-                    document.getElementById('verify_otp_btn').hidden = false
+                    document.getElementById('otp-field').hidden = false
+                    document.getElementById('verify-otp-btn').hidden = false
 
-                    verifyOTP('otp')
+                    verifyOTP()
 
-                    document.getElementById('get_code').value = 'Resend OTP'
+                    document.getElementById('get-code').value = 'Resend OTP'
 
-                    document.getElementById('msg_from_server').innerText = result.message
+                    document.getElementById('msg-from-server').innerText = result.message
                 } else if (authMethod === 'qr') {
-                    document.getElementById('otp_field').hidden = true
-                    document.getElementById('verify_otp_btn').hidden = true
+                    document.getElementById('otp-field').hidden = true
+                    document.getElementById('verify-otp-btn').hidden = true
 
-                    document.getElementById('qr_field').hidden = false
-                    document.getElementById('verify_qr_btn').hidden = false
+                    document.getElementById('qr-field').hidden = false
+                    document.getElementById('verify-qr-btn').hidden = false
 
-                    verifyQR('qr')
+                    verifyQR()
 
-                    document.getElementById('get_code').value = 'Resend QR'
+                    document.getElementById('get-code').value = 'Resend QR'
 
-                    document.getElementById('msg_from_server').innerText = result.message
+                    document.getElementById('msg-from-server').innerText = result.message
                 }
             } else if (result.status === 'error') {
-                document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
+                document.getElementById('msg-from-server').innerText = `Couldn't process your request!`
                 console.log('ERROR: ', result.message)
             }
 
             // Function to verifying OTP
-            function verifyOTP(method) {
+            function verifyOTP() {
 
-                document.getElementById('verify_otp_btn').addEventListener('click', verify_otp)
-
-                async function verify_otp(event) {
+                document.getElementById('verify-otp-btn').addEventListener('click', async (event) => {
                     event.preventDefault()
-                    const otp = document.getElementById('otp_field').value
-                    const email = document.getElementById('user_email').value
+                    const otp = document.getElementById('otp-field').value
+                    const email = document.getElementById('user-email').value
 
-                    document.getElementById('msg_from_server').innerText = 'Verifying OTP...'
+                    document.getElementById('msg-from-server').innerText = 'Verifying OTP...'
 
                     const result = await fetch('/user/validate-login', {
                         method: 'POST',
@@ -223,25 +219,22 @@
 
                     if (result.status == 'ok') {
                         localStorage.setItem('token', result.token)
-
-                        document.getElementById('login_button').hidden = true
-                        document.getElementById('profile_button').hidden = false
+                        document.getElementById('signup-btn').hidden = true
+                        document.getElementById('profile-btn').hidden = false
                     }
-                    document.getElementById('msg_from_server').innerText = result.message
-                }
+                    document.getElementById('msg-from-server').innerText = result.message
+                })
             }
 
             // Function for verifying QR code
-            function verifyQR(method) {
-                document.getElementById('verify_qr_btn').addEventListener('click', verify_qr)
-
-                function verify_qr(event) {
+            function verifyQR() {
+                document.getElementById('verify-qr-btn').addEventListener('click', async (event) => {
                     event.preventDefault()
-                    const email = document.getElementById('user_email').value
-                    const file = document.querySelector('#qr_field').files[0];
-                    // const img = document.getElementById('qr_field')
+                    const email = document.getElementById('user-email').value
+                    const file = document.querySelector('#qr-field').files[0];
+                    // const img = document.getElementById('qr-field')
 
-                    document.getElementById('msg_from_server').innerText = 'Verifying QR...'
+                    document.getElementById('msg-from-server').innerText = 'Verifying QR...'
 
                     window.addEventListener('paste', e => {
                         file.files[0] = e.clipboardData.files;
@@ -268,16 +261,16 @@
                         if (result.status == 'ok') {
                             localStorage.setItem('token', result.token)
 
-                            document.getElementById('login_button').hidden = true
-                            document.getElementById('profile_button').hidden = false
+                            document.getElementById('signup-btn').hidden = true
+                            document.getElementById('profile-btn').hidden = false
                         }
-                        document.getElementById('msg_from_server').innerText = result.message
+                        document.getElementById('msg-from-server').innerText = result.message
                     }, false);
 
                     if (file) {
                         reader.readAsDataURL(file);
                     }
-                }
+                })
             }
         }
     </script>

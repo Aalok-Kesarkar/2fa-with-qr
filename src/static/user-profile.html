@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css" media="screen" type="text/css" />
+    <link rel="stylesheet" href="style1.css" >
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -40,16 +41,16 @@
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" class="nav-link" href="aboutus.html">About Us</a>
+                        <a style="color:white;" class="nav-link" href="team.html">Our Team</a>
+                    </li>
+                    
+                    </li>
+                    <li id="nav-item"><button id="logout-btn"
+                            style="all: unset; cursor: pointer; color:white; font-size: 20px; padding-top: 6.5px;" hidden>Logout</button>
                     </li>
 
                     <li class="nav-item">
-                        <a style="color:white;" id="profile_button" class="nav-link" href="view-user.html"
-                            hidden>Profile</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a style="color:white;" id="login_button" class="nav-link" href="login.html">Login/Signup</a>
+                        <a style="color:white;" id="login-btn" class="nav-link" href="login.html">Login/Signup</a>
                     </li>
                 </ul>
             </div>
@@ -59,24 +60,25 @@
     <h1>User Profile</h1>
     <center>
         <div id="show-profile">
-            <input type="button" id="show_profile_btn" value="View Profile">
-            <input type="button" id="logout_btn" value="Logout">
-            <p id="message_from_server"></p>
-            <p id="user_name"></p>
-            <p id="user_email"></p>
-            <p id="user_contact"></p>
-            <p id="user_age"></p>
-            <p id="user_address"></p>
+            <input class="ptn ptn1" type="button" id="show-profile-btn" value="View Profile">
+            <!-- <input type="button" id="logout-btn" value="Logout"> -->
+            <h3><p id="message-from-server"></p>
+            <p id="user-name"></p>
+            <p id="user-email"></p>
+            <p id="user-contact"></p>
+            <p id="user-age"></p>
+            <p id="user-address"></p>
+            </h3>
         </div>
     </center>
     <!-- JAVASCRIPT CODE BELOW -->
     <script>
-        document.getElementById('show_profile_btn').addEventListener('click', showProfile)
-        document.getElementById('logout_btn').addEventListener('click', logout)
+        document.getElementById('show-profile-btn').addEventListener('click', showProfile)
+        document.getElementById('logout-btn').addEventListener('click', logout)
 
         if (window.localStorage.getItem('token')) {
-            document.getElementById('login_button').hidden = true
-            document.getElementById('profile_button').hidden = false
+            document.getElementById('login-btn').hidden = true
+            document.getElementById('logout-btn').hidden = false
         }
 
         async function showProfile(event) {
@@ -93,19 +95,19 @@
 
                 if (result.status === 'ok') {
 
-                    document.getElementById('message_from_server').innerText = ''
-                    document.getElementById('user_name').innerText = 'Name: ' + result.user.name
-                    document.getElementById('user_email').innerText = 'Email: ' + result.user.email
-                    document.getElementById('user_age').innerText = 'Age: ' + result.user.age
-                    document.getElementById('user_contact').innerText = 'Mobile No: ' + result.user.contact
-                    document.getElementById('user_address').innerText = 'Address: ' + result.user.address
+                    document.getElementById('message-from-server').innerText = ''
+                    document.getElementById('user-name').innerText = 'Name: ' + result.user.name
+                    document.getElementById('user-email').innerText = 'Email: ' + result.user.email
+                    document.getElementById('user-age').innerText = 'Age: ' + result.user.age
+                    document.getElementById('user-contact').innerText = 'Mobile No: ' + result.user.contact
+                    document.getElementById('user-address').innerText = 'Address: ' + result.user.address
 
                 } else if (result.status === 'error') {
-                    document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
+                    document.getElementById('msg-from-server').innerText = `Couldn't process your request!`
                     console.log('ERROR: ', result.message)
                 }
             } else {
-                document.getElementById('message_from_server').innerText = 'Please login to view user profile'
+                document.getElementById('message-from-server').innerText = 'Please login to view user profile'
             }
         }
 
@@ -122,25 +124,25 @@
                 }).then(res => res.json())
 
                 if (result.status === 'ok') {
-                    document.getElementById('message_from_server').innerText = result.message
+                    document.getElementById('message-from-server').innerText = result.message
 
-                    document.getElementById('user_name').innerText
-                        = document.getElementById('user_email').innerText
-                        = document.getElementById('user_contact').innerText
-                        = document.getElementById('user_address').innerText
-                        = document.getElementById('user_age').innerText
+                    document.getElementById('user-name').innerText
+                        = document.getElementById('user-email').innerText
+                        = document.getElementById('user-contact').innerText
+                        = document.getElementById('user-address').innerText
+                        = document.getElementById('user-age').innerText
                         = ''
 
                     localStorage.removeItem('token')
-                    
-                    document.getElementById('login_button').hidden = false
-                    document.getElementById('profile_button').hidden = true
+
+                    document.getElementById('login-btn').hidden = false
+                    document.getElementById('logout-btn').hidden = true
                 } else if (result.status === 'error') {
-                    document.getElementById('msg_from_server').innerText = `Couldn't process your request!`
+                    document.getElementById('msg-from-server').innerText = `Couldn't process your request!`
                     console.log('ERROR: ', result.message)
                 }
             } else {
-                document.getElementById('message_from_server').innerText = 'Not logged in...'
+                document.getElementById('message-from-server').innerText = 'Not logged in...'
             }
         }
     </script>
