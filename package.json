@@ -13,6 +13,7 @@
   "dependencies": {
     "bcrypt": "^5.0.1",
     "express": "^4.17.3",
+    "hbs": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
     "jsqr": "^1.4.0",
     "mongoose": "^6.2.8",
