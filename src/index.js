@@ -21,10 +21,6 @@ app.use((req, res, next) => {
     res.render('404_not_found')
 })
 
-// app.get('*', (req, res) => {
-//     res.render('404_not_found')
-// })
-
 app.listen(PORT, () => {
     console.log(`E-authentication system server running on port ${PORT}`)
 })

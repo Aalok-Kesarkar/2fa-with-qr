@@ -62,9 +62,9 @@
 
     <center>
         <!-- <section id="forma"> -->
-            <!-- <div class="container"> -->
-            <h1>Create new account</h1>
-            <!-- <div class="col-md-6">
+        <!-- <div class="container"> -->
+        <h1>Create new account</h1>
+        <!-- <div class="col-md-6">
                     <form class="contact-form">
                         <div class="form-group"> -->
     </center>
@@ -88,7 +88,8 @@
                 <input type="number" name="user-age" class="form-field" id="user-age" placeholder="Age" />
             </div>
             <div class="form-group">
-                <input type="password" name="user-password" class="form-field" id="user-password" placeholder="Password" required />
+                <input type="password" name="user-password" class="form-field" id="user-password" placeholder="Password"
+                    required />
             </div>
             <div class="form-group">
                 <input type="password" name="user-confirm-password" class="form-field" id="user-confirm-password"
@@ -102,7 +103,8 @@
         <form id="otp-form">
             <!-- following 2 fields will be hidden by default,
             If email with OTP sent to user mail ID successfully, then only these field will be visible on page -->
-            <input type="text" name="otp-field" class="form-field" id="otp-field" placeholder="One Time Password" hidden />
+            <input type="text" name="otp-field" class="form-field" id="otp-field" placeholder="One Time Password"
+                hidden />
             <input type="button" class="ptn ptn1" name="verify-otp-btn" id="verify-otp-btn" value="Login" hidden>
 
         </form><br>
@@ -114,7 +116,8 @@
 
         <input type="button" class="ptn ptn1" name="resend-otp" id="resend-otp" value="Resend OTP" hidden />
         <div>
-            <br><br><h3>Already have an account? <a style="font-size:25px;" href="login.html">Login</a></h3>
+            <br><br>
+            <h3>Already have an account? <a style="font-size:25px;" href="login.html">Login</a></h3>
         </div>
     </center>
 
@@ -265,6 +268,7 @@
         // function for 'resend OTP' to user email ID
         async function resendRequest(event) {
             event.preventDefault()
+            let isValid = validateForm()
             if (isValid) {
                 const email = document.getElementById('user-email').value
 
