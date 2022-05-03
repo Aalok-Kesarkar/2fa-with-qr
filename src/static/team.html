@@ -56,9 +56,78 @@
             </div>
         </nav>
     </section>
-    <center>
+    <!-- <center>
         <h3 style="color: gray; font-style: italic;">We are sorry,<br>this page is not updated</h3>
-    </center>
+    </center> -->
+
+    <div class="row container-1">
+        <div class="column">
+            <div class="card">
+                <!-- <img src="/w3images/team1.jpg" alt="Jane" style="width:100%"> -->
+                <div class="container">
+                    <h2>Salman Khan</h2>
+                    <p class="title">Team Leader</p>
+                    <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p> -->
+                    <!-- <p>example@example.com</p> -->
+                    <!-- <p><button class="button">Contact</button></p> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="card">
+                <!-- <img src="/w3images/team2.jpg" alt="Mike" style="width:100%"> -->
+                <div class="container">
+                    <h2>Saloni Mane</h2>
+                    <p class="title">Art Director</p>
+                    <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p> -->
+                    <!-- <p>example@example.com</p> -->
+                    <!-- <p><button class="button">Contact</button></p> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="card">
+                <!-- <img src="/w3images/team3.jpg" alt="John" style="width:100%"> -->
+                <div class="container">
+                    <h2>Janhavi Naik</h2>
+                    <p class="title">Designer</p>
+                    <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p> -->
+                    <!-- <p>example@example.com</p> -->
+                    <!-- <p><button class="button">Contact</button></p> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row container-2">
+        <div class="column">
+            <div class="card">
+                <!-- <img src="/w3images/team1.jpg" alt="Jane" style="width:100%"> -->
+                <div class="container">
+                    <h2>Aalok Kesarkar</h2>
+                    <p class="title">CEO & Founder</p>
+                    <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p> -->
+                    <!-- <p>example@example.com</p> -->
+                    <!-- <p><button class="button">Contact</button></p> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="card">
+                <!-- <img src="/w3images/team1.jpg" alt="Jane" style="width:100%"> -->
+                <div class="container">
+                    <h2>Mahima Gautam</h2>
+                    <p class="title">CEO & Founder</p>
+                    <!-- <p>Some text that describes me lorem ipsum ipsum lorem.</p> -->
+                    <!-- <p>example@example.com</p> -->
+                    <!-- <p><button class="button">Contact</button></p> -->
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script>
     if (window.localStorage.getItem('token')) {
@@ -66,5 +135,67 @@
         document.getElementById('profile_button').hidden = false
     }
 </script>
+<style>
+    html {
+        box-sizing: border-box;
+    }
+
+    *,
+    *:before,
+    *:after {
+        box-sizing: inherit;
+    }
+
+    .column {
+        float: left;
+        /* width: 25%; */
+        /* margin-bottom: 10px; */
+        padding: 10px 10px;
+    }
+
+    .container-1 {
+        margin-top: 80px;
+        margin-left: 330px;
+        margin-right: 250px;
+    }
+
+    .container-2 {
+        margin-left: 380px;
+        margin-right: 300px;
+        padding-left: 120px;
+        /* padding-left: 100px; */
+    }
+
+    @media screen and (max-width: 650px) {
+        .column {
+            width: 100%;
+            display: block;
+        }
+    }
+
+    .card {
+        box-shadow: 0 5px 10px 0 rgba(0, 108, 128, 0.2);
+        margin: 25px 25px 25px 25px;
+        height: 300px;
+        width: 300px;
+        border-radius: 50%;
+    }
+
+    .container {
+        padding: 90px 16px;
+        margin: 25px 25px;
+    }
+
+    .container::after,
+    .row::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    .title {
+        color: grey;
+    }
+</style>
 
 </html>
