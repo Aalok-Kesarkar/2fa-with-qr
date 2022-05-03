@@ -167,11 +167,11 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
-userSchema.pre('remove', async function (next) {
-    const user = this
-    await Task.deleteMany({ owner: user._id })
-    next()
-})
+// userSchema.pre('remove', async function (next) {
+//     const user = this
+//     await Task.deleteMany({ owner: user._id })
+//     next()
+// })
 
 // This create an model as well as an file named users in database
 const User = mongoose.model('User', userSchema)

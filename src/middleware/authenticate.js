@@ -15,7 +15,7 @@ const authenticate = async (req, res, next) => {
         req.user = user
         next()
     } catch (err) {
-        res.status(401).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `Please login to view profile` })
+        res.status(401).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `Please login first` })
     }
 }
 

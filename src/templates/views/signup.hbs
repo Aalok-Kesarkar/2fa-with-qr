@@ -242,6 +242,7 @@
 
                         if (result.status == 'ok') {
                             localStorage.setItem('token', result.token)
+                            localStorage.setItem('email', email)
                             document.getElementById('view-user-profile-link').hidden = false
 
                             document.getElementById('login-btn').hidden = true

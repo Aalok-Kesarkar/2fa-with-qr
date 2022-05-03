@@ -113,7 +113,7 @@
         </h4>
 
         <br><br>
-        <h3>Don't have an account? <a style="font-size:25px;" href="signup.html">Signup</a></h3>
+        <h3>Don't have an account? <a style="font-size:25px;" href="/signup">Signup</a></h3>
     </center>
 
 
@@ -222,6 +222,7 @@
 
                     if (result.status == 'ok') {
                         localStorage.setItem('token', result.token)
+                        localStorage.setItem('email', email)
                         document.getElementById('signup-btn').hidden = true
                         document.getElementById('profile-btn').hidden = false
                     }
@@ -263,6 +264,7 @@
 
                         if (result.status == 'ok') {
                             localStorage.setItem('token', result.token)
+                            localStorage.setItem('email', email)
 
                             document.getElementById('signup-btn').hidden = true
                             document.getElementById('profile-btn').hidden = false

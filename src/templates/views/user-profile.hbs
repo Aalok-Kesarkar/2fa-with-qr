@@ -63,7 +63,10 @@
     <center>
         <div id="show-profile">
             <input class="ptn ptn1" type="button" id="show-profile-btn" value="View Profile">
-            <!-- <input type="button" id="logout-btn" value="Logout"> -->
+            <input type="button" class="ptn ptn1" name="delete-profile" id="delete-profile"
+                value="Delete Account"><br><br>
+
+
             <h3>
                 <p id="message-from-server"></p>
                 <div id="container">
@@ -75,11 +78,22 @@
                 </div>
             </h3>
         </div>
+        <form id="delete-account-form">
+            <div id="delete-account" hidden>
+                <p style="font-size: 20px; color:rgb(122, 66, 66);">Are you sure want to delete your
+                    account?<br>Please enter password below.</p>
+                <input type="password" id="password" class="form-field" placeholder="Password" required><br><br>
+                <input type="submit" class="ptn ptn2"
+                    style="color: rgb(255, 89, 11); font-size: 18px; padding: 5px 15px 5px 15px;"
+                    value="Confirm Delete">
+            </div>
+        </form>
     </center>
     <!-- JAVASCRIPT CODE BELOW -->
     <script>
         document.getElementById('show-profile-btn').addEventListener('click', showProfile)
         document.getElementById('logout-btn').addEventListener('click', logout)
+        document.getElementById('delete-profile').addEventListener('click', showDeletionForm)
 
         if (window.localStorage.getItem('token')) {
             document.getElementById('login-btn').hidden = true
@@ -88,6 +102,7 @@
 
         async function showProfile(event) {
             event.preventDefault()
+            document.getElementById('delete-account').hidden = true
 
             if (localStorage.getItem('token')) {
                 const result = await fetch('/user', {
@@ -112,7 +127,7 @@
                     console.log('ERROR: ', result.message)
                 }
             } else {
-                document.getElementById('message-from-server').innerText = 'Please login to view user profile'
+                document.getElementById('message-from-server').innerText = 'Please login first!'
             }
         }
 
@@ -139,6 +154,7 @@
                         = ''
 
                     localStorage.removeItem('token')
+                    localStorage.removeItem('email')
 
                     document.getElementById('login-btn').hidden = false
                     document.getElementById('logout-btn').hidden = true
@@ -148,6 +164,68 @@
                 }
             } else {
                 document.getElementById('message-from-server').innerText = 'Not logged in...'
+            }
+        }
+
+        function showDeletionForm() {
+            if (localStorage.getItem('token')) {
+                document.getElementById('delete-account').hidden = false
+
+                document.getElementById('user-name').innerText
+                    = document.getElementById('user-email').innerText
+                    = document.getElementById('user-contact').innerText
+                    = document.getElementById('user-address').innerText
+                    = document.getElementById('user-age').innerText
+                    = ''
+
+                document.getElementById('delete-account-form').addEventListener('submit', deleteProfile)
+
+            } else {
+                document.getElementById('message-from-server').innerText = 'Please login first!'
+            }
+        }
+
+        async function deleteProfile(event) {
+            event.preventDefault()
+
+            const email = localStorage.getItem('email')
+            const password = document.getElementById('password').value
+
+            if (localStorage.getItem('token')) {
+                const result = await fetch('/user', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                }).then(res => res.json())
+
+                if (result.status === 'ok') {
+                    document.getElementById('message-from-server').innerText = result.message
+
+                    document.getElementById('user-name').innerText
+                        = document.getElementById('user-email').innerText
+                        = document.getElementById('user-contact').innerText
+                        = document.getElementById('user-address').innerText
+                        = document.getElementById('user-age').innerText
+                        = ''
+
+                    localStorage.removeItem('token')
+                    localStorage.removeItem('email')
+
+                    document.getElementById('delete-account').hidden = true
+
+                    document.getElementById('login-btn').hidden = false
+                    document.getElementById('logout-btn').hidden = true
+                } else if (result.status === 'error') {
+                    document.getElementById('message-from-server').innerText = result.message
+                }
+            } else {
+                document.getElementById('message-from-server').innerText = 'Please login first!'
             }
         }
     </script>

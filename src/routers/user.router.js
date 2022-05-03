@@ -65,12 +65,12 @@ router.post('/user/verify-email', async (req, res) => {
                 user.tempSecretKey = undefined
                 user.isEmailVerified = true
 
-                const emailSubject = `Email is verified succesfuly`
-                const htmlText = `<h3>Dear ${user.name},</h3><br>Your email address is verified successfuly!</h2>`
+                const emailSubject = `Email is verified successfully`
+                const htmlText = `<h3>Dear ${user.name},</h3><br>Your email address is verified successfully!</h2>`
                 emailSender.regularEmail(user.email, emailSubject, htmlText)
 
                 await user.save()
-                res.status(201).json({ Phase: `DEPLOYMENT PHASE`, status: 'ok', message: `Email verified succesfuly`, token })
+                res.status(201).json({ Phase: `DEPLOYMENT PHASE`, status: 'ok', message: `Email verified successfully`, token })
             } else {
                 res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `OTP doesn't match` })
             }
@@ -192,50 +192,17 @@ router.post('/user/logout', authenticate, async (req, res) => {
     }
 })
 
-// @route: POST /user/logout-all
-// @desc: Logout from all currently logged in devices
-router.post('/user/logout-all', authenticate, async (req, res) => {
-    try {
-        req.user.tokens = []
-        await req.user.save()
-        res.send({ Phase: `DEPLOYMENT PHASE`, status: 'ok', message: `Successfully logged out of all devices` })
-    } catch (err) {
-        res.status(500).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `Can't perform logout operation, ${err}` })
-    }
-})
-
-// @route: PATCH /user
-// @desc: Update users personal data after verification
-router.patch('/user', authenticate, async (req, res) => {
-    const updates = Object.keys(req.body)
-    const allowedUpdates = ['name', 'email', 'age', 'password']
-    const isValidUpdate = updates.every((update) => { // if every param from requested 'updates' is available in allowed list then only it'll return true
-        return allowedUpdates.includes(update)
-    })
-
-    if (!isValidUpdate) {
-        return res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: 'Invalid update operation detected' })
-    }
-
-    try {
-        updates.forEach((update) => {
-            req.user[update] = req.body[update]
-        })
-        await req.user.save()
-        res.send({ Phase: `DEPLOYMENT PHASE`, status: 'ok', message: `Updated successfully!`, updated: req.user })
-    } catch (err) {
-        res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `Can't update, ${err}` })
-    }
-})
-
 // @route: DELETE /user
 // @desc: Delete users profile
 router.delete('/user', authenticate, async (req, res) => {
     try {
+        const user = await User.findByCredentials(req.body.email, req.body.password)
+        if (!user)
+            return res.send({ Phase: `DEVLOPEMENT PHASE`, status: 'error', message: `Wrong password...` })
         await req.user.remove()
-        res.send({ Phase: `DEPLOYMENT PHASE`, status: 'ok', message: `User Deleted :(`, deletedUser: req.user })
+        res.send({ Phase: `DEVLOPEMENT PHASE`, status: 'ok', message: `Your acccount having email ID ${req.user.email} is deleted.` })
     } catch (err) {
-        res.status(500).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `Couldn't delete, ${err}` })
+        res.status(500).send({ Phase: `DEVLOPEMENT PHASE`, status: 'error', message: `Couldn't delete, ${err}` })
     }
 })
 
