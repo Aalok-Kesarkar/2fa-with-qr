@@ -9,7 +9,11 @@ const { PNG } = require('pngjs')
 // const multer = require('multer')
 const router = new express.Router()
 
-// const upload = multer()
+// @route: GET /
+// @desc: Render 'home' page
+router.get('/', (req, res) => {
+    res.render('index')
+})
 
 // @route: POST /user/signin
 // @desc: Signin a new user with new login details
@@ -224,7 +228,7 @@ router.patch('/user', authenticate, async (req, res) => {
     }
 })
 
-// @route: /user
+// @route: DELETE /user
 // @desc: Delete users profile
 router.delete('/user', authenticate, async (req, res) => {
     try {
@@ -274,6 +278,36 @@ router.post('/user/verify-qr', async (req, res) => {
     } catch (err) {
         res.status(500).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `${err}` })
     }
+})
+
+// @route: GET /team
+// @desc: Render 'team member' page
+router.get('/team', (req, res) => {
+    res.render('team')
+})
+
+// @route: GET /cart
+// @desc: Render 'cart' page
+router.get('/cart', (req, res) => {
+    res.render('cart')
+})
+
+// @route: GET /cart
+// @desc: Render 'cart' page
+router.get('/products', (req, res) => {
+    res.render('products')
+})
+
+// @route: GET /login
+// @desc: Render 'login' page
+router.get('/login', (req, res) => {
+    res.render('login')
+})
+
+// @route: GET /cart
+// @desc: Render 'cart' page
+router.get('/profile', (req, res) => {
+    res.render('user-profile')
 })
 
 module.exports = router
