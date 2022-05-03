@@ -256,6 +256,8 @@
                     })
 
                     // if server sends encounter error, following code snippet will be executed
+                } else if (result.status === 'error' && result.errorType === 'duplicate') {
+                    document.getElementById('msg-from-server').innerText = result.message
                 } else if (result.status === 'error') {
                     document.getElementById('msg-from-server').innerText = `Couldn't process your request!`
                     console.log('ERROR: ', result.message)

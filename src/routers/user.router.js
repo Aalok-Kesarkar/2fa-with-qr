@@ -35,7 +35,7 @@ router.post('/user/signin', async (req, res) => {
 
         res.send({ Phase: `DEPLOYMENT PHASE`, status: 'ok', message: `Check inbox of ${user.email} for email verification OTP!` })
     } catch (err) {
-        err.code === 11000 ? res.status(400).json({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `Can't use this email address or mobile number` }) : res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: ` ${err}` })
+        err.code === 11000 ? res.status(400).json({ Phase: `DEPLOYMENT PHASE`, status: 'error', errorType:`duplicate`, message: `Can't use this email address or mobile number` }) : res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: ` ${err}` })
     }
 })
 
