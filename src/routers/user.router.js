@@ -124,7 +124,7 @@ router.post('/user/login', async (req, res) => {
             try {
                 const otp = await user.generateOTP()
 
-                const emailSubject = `OTP for logging in`
+                const emailSubject = `OTP for login`
                 const htmlText = `<h3>Dear ${user.name},</h3><br>OTP for logging in is: <h2>${otp}</h2><br>One Time Password is valid for 3 minutes only`
                 await emailSender.regularEmail(user.email, emailSubject, htmlText)
                 return res.send({ Phase: `DEPLOYMENT PHASE`, status: 'ok', message: `OTP sent to ${user.email} successfuly` })

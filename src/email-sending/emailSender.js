@@ -28,7 +28,7 @@ const verifyLoginByQR = (userEmail, userName, imgBin) => {
         mailTransporter.sendMail({
             from: "Snap Buy Online Shopping <aalok.temp@outlook.com>",
             to: userEmail,
-            subject: "QR for logging in ot app",
+            subject: "QR image for login",
             attachDataUrls: true,
             html: `<h2>Dear ${userName},</h2><br>One Time QR for logging in to Snap Buy account. Please copy and paste into browser to get authenticated.<br><img src=${imgBin}><br>Valid for 3 minutes only`,
             attachments: [{
