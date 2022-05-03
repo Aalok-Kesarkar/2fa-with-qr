@@ -304,6 +304,12 @@ router.get('/login', (req, res) => {
     res.render('login')
 })
 
+// @route: GET /signup
+// @desc: Render 'signup' page
+router.get('/signup', (req, res) => {
+    res.render('signup')
+})
+
 // @route: GET /cart
 // @desc: Render 'cart' page
 router.get('/profile', (req, res) => {
