@@ -75,6 +75,7 @@
                     <p id="user-contact"></p>
                     <p id="user-age"></p>
                     <p id="user-address"></p>
+                    <p id="user-created-at"></p>
                 </div>
             </h3>
         </div>
@@ -115,15 +116,18 @@
 
                 if (result.status === 'ok') {
 
+                    let accCreated = (result.userCreated).split('T')
+
                     document.getElementById('message-from-server').innerText = ''
-                    document.getElementById('user-name').innerText = 'Name: ' + result.user.name
-                    document.getElementById('user-email').innerText = 'Email: ' + result.user.email
-                    document.getElementById('user-age').innerText = 'Age: ' + result.user.age
-                    document.getElementById('user-contact').innerText = 'Mobile No: ' + result.user.contact
-                    document.getElementById('user-address').innerText = 'Address: ' + result.user.address
+                    document.getElementById('user-name').innerHTML = `<p style="color: rgb(0, 92, 197); display:inline">Name:</p> ${result.userName}`
+                    document.getElementById('user-email').innerHTML = `<p style="color: rgb(0, 92, 197); display:inline">Email:</p> ${result.userEmail}`
+                    document.getElementById('user-age').innerHTML = `<p style="color: rgb(0, 92, 197); display:inline">Age:</p> ${result.userAge}`
+                    document.getElementById('user-contact').innerHTML = `<p style="color: rgb(0, 92, 197); display:inline">Mobile No:</p> ${result.userContact}`
+                    document.getElementById('user-address').innerHTML = `<p style="color: rgb(0, 92, 197); display:inline">Address:</p> ${result.userAddress}`
+                    document.getElementById('user-created-at').innerHTML = `<p style="color: rgb(0, 92, 197); display:inline">Account created at:</p> ${accCreated[0]}`
 
                 } else if (result.status === 'error') {
-                    document.getElementById('msg-from-server').innerText = `Couldn't process your request!`
+                    document.getElementById('msg-from-server').innerHTML = `<p style="color:red">Couldn't process your request!</p>`
                     console.log('ERROR: ', result.message)
                 }
             } else {
@@ -144,13 +148,14 @@
                 }).then(res => res.json())
 
                 if (result.status === 'ok') {
-                    document.getElementById('message-from-server').innerText = result.message
+                    document.getElementById('message-from-server').innerHTML = `<p style="color:green">${result.message}</p>`
 
                     document.getElementById('user-name').innerText
                         = document.getElementById('user-email').innerText
                         = document.getElementById('user-contact').innerText
                         = document.getElementById('user-address').innerText
                         = document.getElementById('user-age').innerText
+                        = document.getElementById('user-created-at').innerText
                         = ''
 
                     localStorage.removeItem('token')
@@ -159,11 +164,11 @@
                     document.getElementById('login-btn').hidden = false
                     document.getElementById('logout-btn').hidden = true
                 } else if (result.status === 'error') {
-                    document.getElementById('msg-from-server').innerText = `Couldn't process your request!`
+                    document.getElementById('msg-from-server').innerHTML = `<p style="color:red">Couldn't process your request!</p>`
                     console.log('ERROR: ', result.message)
                 }
             } else {
-                document.getElementById('message-from-server').innerText = 'Not logged in...'
+                document.getElementById('message-from-server').innerText = 'Please login first!'
             }
         }
 
@@ -176,6 +181,7 @@
                     = document.getElementById('user-contact').innerText
                     = document.getElementById('user-address').innerText
                     = document.getElementById('user-age').innerText
+                    = document.getElementById('user-created-at').innerText
                     = ''
 
                 document.getElementById('delete-account-form').addEventListener('submit', deleteProfile)
@@ -205,13 +211,14 @@
                 }).then(res => res.json())
 
                 if (result.status === 'ok') {
-                    document.getElementById('message-from-server').innerText = result.message
+                    document.getElementById('message-from-server').innerHTML = `<p style="color:green">${result.message}</p>`
 
                     document.getElementById('user-name').innerText
                         = document.getElementById('user-email').innerText
                         = document.getElementById('user-contact').innerText
                         = document.getElementById('user-address').innerText
                         = document.getElementById('user-age').innerText
+                        = document.getElementById('user-created-at').innerText
                         = ''
 
                     localStorage.removeItem('token')
@@ -222,7 +229,7 @@
                     document.getElementById('login-btn').hidden = false
                     document.getElementById('logout-btn').hidden = true
                 } else if (result.status === 'error') {
-                    document.getElementById('message-from-server').innerText = result.message
+                    document.getElementById('message-from-server').innerHTML = `<p style="color:red">${result.message}</p>`
                 }
             } else {
                 document.getElementById('message-from-server').innerText = 'Please login first!'

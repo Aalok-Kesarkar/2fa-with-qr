@@ -181,7 +181,7 @@
 
                     document.getElementById('get-code').value = 'Resend OTP'
 
-                    document.getElementById('msg-from-server').innerText = result.message
+                    document.getElementById('msg-from-server').innerHTML = `<p style="color:green">${result.message}</p>`
                 } else if (authMethod === 'qr') {
                     document.getElementById('otp-field').hidden = true
                     document.getElementById('verify-otp-btn').hidden = true
@@ -193,10 +193,10 @@
 
                     document.getElementById('get-code').value = 'Resend QR'
 
-                    document.getElementById('msg-from-server').innerText = result.message
+                    document.getElementById('msg-from-server').innerHTML = `<p style="color:green">${result.message}</p>`
                 }
             } else if (result.status === 'error') {
-                document.getElementById('msg-from-server').innerText = `Couldn't process your request!`
+                document.getElementById('msg-from-server').innerHTML = `<p style="color:red">Couldn't process your request!</p>`
                 console.log('ERROR: ', result.message)
             }
 
@@ -223,10 +223,11 @@
                     if (result.status == 'ok') {
                         localStorage.setItem('token', result.token)
                         localStorage.setItem('email', email)
+
                         document.getElementById('signup-btn').hidden = true
                         document.getElementById('profile-btn').hidden = false
                     }
-                    document.getElementById('msg-from-server').innerText = result.message
+                    document.getElementById('msg-from-server').innerHTML = `<p style="color:red">${result.message}</p>`
                 })
             }
 
@@ -235,7 +236,7 @@
                 document.getElementById('verify-qr-btn').addEventListener('click', async (event) => {
                     event.preventDefault()
                     const email = document.getElementById('user-email').value
-                    const file = document.querySelector('#qr-field').files[0];
+                    const file = document.querySelector('#qr-field').files[0]
                     // const img = document.getElementById('qr-field')
 
                     document.getElementById('msg-from-server').innerText = 'Verifying QR...'
@@ -262,14 +263,14 @@
                             })
                         }).then(res => res.json())
 
-                        if (result.status == 'ok') {
+                        if (result.status === 'ok') {
                             localStorage.setItem('token', result.token)
                             localStorage.setItem('email', email)
 
                             document.getElementById('signup-btn').hidden = true
                             document.getElementById('profile-btn').hidden = false
                         }
-                        document.getElementById('msg-from-server').innerText = result.message
+                        document.getElementById('msg-from-server').innerHTML = `<p style="color: red">${result.message}</p>`
                     }, false);
 
                     if (file) {

@@ -78,7 +78,8 @@
                 <input type="text" name="user-email" class="form-field" id="user-email" placeholder="Email" required />
             </div>
             <div class="form-group">
-                <input type="text" name="contact-num" class="form-field" id="contact-num" placeholder="Mobile No." />
+                <input type="text" name="contact-num" class="form-field" id="contact-num" placeholder="Mobile No."
+                    maxlength="10" minlength="10" />
             </div>
             <div class="form-group">
                 <input type="text" name="user-address" class="form-field" id="user-address" placeholder="Address" />
@@ -221,7 +222,7 @@
                     document.getElementById('verify-otp-btn').hidden = false
                     document.getElementById('resend-otp').hidden = false
 
-                    document.getElementById('msg-from-server').innerText = result.message
+                    document.getElementById('msg-from-server').innerHTML = `<p style="color:green">${result.message}</p>`
 
                     document.getElementById('verify-otp-btn').addEventListener('click', async (event) => {
                         event.preventDefault()
@@ -248,18 +249,17 @@
                             document.getElementById('login-btn').hidden = true
                             document.getElementById('profile-btn').hidden = false
 
-                            document.getElementById('msg-from-server').innerText = result.message
+                            document.getElementById('msg-from-server').innerHTML = `<p style="color:green">${result.message}</p>`
                         } else if (result.status === 'error') {
-                            document.getElementById('msg-from-server').innerText = result.message
-                            console.log('ERROR: ', result.message)
+                            document.getElementById('msg-from-server').innerHTML = `<p style="color:red">${result.message}</p>`
                         }
                     })
 
                     // if server sends encounter error, following code snippet will be executed
                 } else if (result.status === 'error' && result.errorType === 'duplicate') {
-                    document.getElementById('msg-from-server').innerText = result.message
+                    document.getElementById('msg-from-server').innerHTML = `<p style="color:red">${result.message}</p>`
                 } else if (result.status === 'error') {
-                    document.getElementById('msg-from-server').innerText = `Couldn't process your request!`
+                    document.getElementById('msg-from-server').innerText = `<p style="color:red">Couldn't process your request!</p>`
                     console.log('ERROR: ', result.message)
                 }
             } else {

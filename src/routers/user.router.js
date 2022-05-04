@@ -35,7 +35,7 @@ router.post('/user/signin', async (req, res) => {
 
         res.send({ Phase: `DEPLOYMENT PHASE`, status: 'ok', message: `Check inbox of ${user.email} for email verification OTP!` })
     } catch (err) {
-        err.code === 11000 ? res.status(400).json({ Phase: `DEPLOYMENT PHASE`, status: 'error', errorType:`duplicate`, message: `Can't use this email address or mobile number` }) : res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: ` ${err}` })
+        err.code === 11000 ? res.status(400).json({ Phase: `DEPLOYMENT PHASE`, status: 'error', errorType: `duplicate`, message: `Can't use this email address or mobile number` }) : res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: ` ${err}` })
     }
 })
 
@@ -165,7 +165,7 @@ router.post('/user/validate-login', async (req, res) => {
             const token = await user.generateAuthToken()
             res.send({ Phase: `DEPLOYMENT PHASE`, status: 'ok', message: `OTP verified and logged in successfully`, token })
         } else {
-            res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: 'OTP not correct or timed out' })
+            res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `OTP not correct or timed out` })
         }
     } catch (err) {
         res.status(400).send({ Phase: `DEPLOYMENT PHASE`, status: 'error', message: `Error occured, ${err}` })
@@ -175,7 +175,7 @@ router.post('/user/validate-login', async (req, res) => {
 // @route: GET /user
 // @desc: Show users profile after logging in
 router.get('/user', authenticate, async (req, res) => {
-    res.send({ Phase: `DEPLOYMENT PHASE`, status: 'ok', user: req.user })
+    res.send({ Phase: `DEPLOYMENT PHASE`, status: 'ok', userName: req.user.name, userEmail: req.user.email, userContact: req.user.contact, userAddress: req.user.address, userAge: req.user.age, userCreated: req.user.createdAt })
 })
 
 // @route: POST /user/logout
