@@ -269,8 +269,10 @@
 
                             document.getElementById('signup-btn').hidden = true
                             document.getElementById('profile-btn').hidden = false
-                        }
-                        document.getElementById('msg-from-server').innerHTML = `<p style="color: red">${result.message}</p>`
+
+                            document.getElementById('msg-from-server').innerHTML = `<p style="color: green">${result.message}</p>`
+                        } else
+                            document.getElementById('msg-from-server').innerHTML = `<p style="color: red">${result.message}</p>`
                     }, false);
 
                     if (file) {
