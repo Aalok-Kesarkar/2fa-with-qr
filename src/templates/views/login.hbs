@@ -274,10 +274,8 @@
                         } else if (((result.message).split(':'))[0] === 'VersionError') {
                             console.log(((result.message).split(':'))[0] === 'VersionError')
                             document.getElementById('msg-from-server').innerHTML = `<p style="color: red">Something went wrong, please try again.</p>`
-                            console.log(result.message)
                         } else {
                             document.getElementById('msg-from-server').innerHTML = `<p style="color: red">${result.message}</p>`
-                            console.log(result.message)
                         }
                     }, false);
 
